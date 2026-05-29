@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- MAGICAL GLOWING LIQUID (Inside Flask) -->
+    <path
+        android:pathData="M38,62 L70,62 L75,71 A12,12 0 0,1 65,83 L43,83 A12,12 0 0,1 33,71 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="54"
+                android:startY="62"
+                android:endX="54"
+                android:endY="83"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#F472B6" /> <!-- Glowing Pink -->
+                <item android:offset="1.0" android:color="#AC25E2" /> <!-- Deep Magic Violet -->
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Liquid surface shine line -->
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M 38,61 h 32 v 1.5 h -32 z" />
+
+    <!-- ALCHEMY GLASS BOTTLE / FLASK OUTLINE -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M48,42 L48,48 L32,71 A14,14 0 0,0 43,85 L65,85 A14,14 0 0,0 76,71 L60,48 L60,42" />
+
+    <!-- FLASK RIM (Top opening) -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M46,38 A2,2 0 0,1 48,36 L60,36 A2,2 0 0,1 62,38 L62,40 A2,2 0 0,1 60,42 L48,42 A2,2 0 0,1 46,40 Z" />
+
+    <!-- CORK/TAMPON (Spiritual gold cork) -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M49,32 L59,32 L58,36 L50,36 Z" />
+
+    <!-- BUBBLES RISING (Glowing spheres) -->
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M 52,48 A 2,2 0 1,1 51.99,48 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M 56,54 A 1.5,1.5 0 1,1 55.99,54 Z" />
+    <path
+        android:fillColor="#FB7185"
+        android:pathData="M 46,58 A 1.5,1.5 0 1,1 45.99,58 Z" />
+    <path
+        android:fillColor="#A78BFA"
+        android:pathData="M 61,60 A 2,2 0 1,1 60.99,60 Z" />
+
+    <!-- SHINE MARK ON THE GLASS BODY -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M 41,75 A 8,8 0 0,1 36,68" />
+</vector>

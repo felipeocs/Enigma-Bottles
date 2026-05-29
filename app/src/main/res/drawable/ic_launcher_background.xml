@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="108"
+                android:endY="108"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#0F172A" /> <!-- Dark Slate/Navy -->
+                <item android:offset="1.0" android:color="#2E1065" /> <!-- Deep Magic Purple -->
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Elegant golden background circular seal -->
+    <path
+        android:fillColor="#151233"
+        android:strokeColor="#FFD700"
+        android:strokeWidth="1.5"
+        android:pathData="M54,18 A36,36 0 1,1 53.99,18 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#4F46E5"
+        android:strokeWidth="0.8"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M 33,54 L 75,54 M 54,33 L 54,75" />
+</vector>

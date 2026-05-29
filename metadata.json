@@ -1,0 +1,6 @@
+{
+  "name": "Enigma Bottles",
+  "description": "Descubra a sequência correta de garrafas coloridas com trocas precisas e raciocínio lógico no modo clássico ou desafio diário mundial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
