@@ -121,7 +121,7 @@
     <string name="daily">Daily</string>
     <string name="classic">Classic</string>
     <string name="concluded_at">Completed on: </string>
-    <string name="swaps_and_time">Swaps: %d | Time: %s</string>
+    <string name="swaps_and_time">Swaps: %1$d | Time: %2$s</string>
     <string name="alquimia_sub">Alchemy, Sequences &amp; Logic</string>
     <string name="unlocked_new_diff">🎉 Fantastic! You unlocked %s difficulty!</string>
     <string name="praise_awesome">Incredible! Logic worthy of a Grand Alchemist! 🧙</string>

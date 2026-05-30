@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-  namespace = "com.example"
+  namespace = "com.enigmabottle"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
-    applicationId = "com.aistudio.enigmabottles.vktmxa"
+    applicationId = "com.enigmabottle"
     minSdk = 24
     targetSdk = 36
     versionCode = 3
@@ -22,11 +22,35 @@ android {
 
   signingConfigs {
     create("release") {
-      val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
+      val envFile = file("${rootDir}/.env")
+      var envStorePassword = System.getenv("STORE_PASSWORD")
+      var envKeyPassword = System.getenv("KEY_PASSWORD")
+      var envKeystorePath = System.getenv("KEYSTORE_PATH")
+      var envKeyAlias = System.getenv("KEY_ALIAS") ?: "upload"
+
+      if (envFile.exists()) {
+        envFile.forEachLine { line ->
+          val trimmed = line.trim()
+          if (trimmed.startsWith("STORE_PASSWORD=")) {
+            envStorePassword = trimmed.substringAfter("=").trim()
+          }
+          if (trimmed.startsWith("KEY_PASSWORD=")) {
+            envKeyPassword = trimmed.substringAfter("=").trim()
+          }
+          if (trimmed.startsWith("KEYSTORE_PATH=")) {
+            envKeystorePath = trimmed.substringAfter("=").trim()
+          }
+          if (trimmed.startsWith("KEY_ALIAS=")) {
+            envKeyAlias = trimmed.substringAfter("=").trim()
+          }
+        }
+      }
+
+      val keystorePath = envKeystorePath ?: "${rootDir}/my-upload-key.jks"
       storeFile = file(keystorePath)
-      storePassword = System.getenv("STORE_PASSWORD")
-      keyAlias = "upload"
-      keyPassword = System.getenv("KEY_PASSWORD")
+      storePassword = envStorePassword ?: "dummy_store_password"
+      keyAlias = envKeyAlias
+      keyPassword = envKeyPassword ?: "dummy_key_password"
     }
     create("debugConfig") {
       storeFile = file("${rootDir}/debug.keystore")
@@ -70,6 +94,9 @@ secrets {
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
   implementation(platform(libs.firebase.bom))
+  implementation(libs.play.services.ads)
+  implementation(libs.play.billing)
+  implementation(libs.play.billing.ktx)
   // implementation(libs.accompanist.permissions)
   implementation(libs.androidx.activity.compose)
   // implementation(libs.androidx.camera.camera2)

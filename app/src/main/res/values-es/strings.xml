@@ -121,7 +121,7 @@
     <string name="daily">Diario</string>
     <string name="classic">Clásico</string>
     <string name="concluded_at">Terminado en: </string>
-    <string name="swaps_and_time">Intercambios: %d | Tiempo: %s</string>
+    <string name="swaps_and_time">Intercambios: %1$d | Tiempo: %2$s</string>
     <string name="alquimia_sub">Alquimia, Secuencias y Lógica</string>
     <string name="unlocked_new_diff">🎉 ¡Excelente! Desbloqueaste la dificultad %s!</string>
     <string name="praise_awesome">¡Increíble! ¡Pensamiento digno de Alquimista Supremo! 🧙</string>
