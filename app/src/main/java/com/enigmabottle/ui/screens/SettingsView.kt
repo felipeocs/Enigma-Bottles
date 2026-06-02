@@ -74,7 +74,7 @@ fun SettingsView(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Voltar",
+                        contentDescription = TextRes.get("back", viewModel.currentLanguage),
                         tint = if (isLight) Color(0xFF475569) else Color.White,
                         modifier = Modifier.size(18.dp)
                     )
@@ -135,7 +135,7 @@ fun SettingsView(
                                     if (isSelected) {
                                         Icon(
                                             imageVector = Icons.Default.Check,
-                                            contentDescription = "Ativo",
+                                            contentDescription = TextRes.get("equipped", viewModel.currentLanguage),
                                             tint = Color(0xFF4F46E5),
                                             modifier = Modifier.size(18.dp)
                                         )
@@ -269,7 +269,7 @@ fun SettingsView(
                                 )
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.Launch,
-                                    contentDescription = "Read",
+                                    contentDescription = null,
                                     tint = if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.4f),
                                     modifier = Modifier.size(16.dp)
                                 )
@@ -294,7 +294,7 @@ fun SettingsView(
                                 )
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.Launch,
-                                    contentDescription = "Read",
+                                    contentDescription = null,
                                     tint = if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.4f),
                                     modifier = Modifier.size(16.dp)
                                 )
@@ -306,8 +306,14 @@ fun SettingsView(
                 // Technical diagnostic credentials
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
+                    val rawVersion = TextRes.get("app_version_info", viewModel.currentLanguage)
+                    val formattedVersion = try {
+                        String.format(rawVersion, com.enigmabottle.BuildConfig.VERSION_NAME)
+                    } catch (e: Exception) {
+                        "Enigma Bottles v${com.enigmabottle.BuildConfig.VERSION_NAME}"
+                    }
                     Text(
-                        text = TextRes.get("app_version_info", viewModel.currentLanguage),
+                        text = formattedVersion,
                         color = if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.35f),
                         fontSize = 10.sp,
                         textAlign = TextAlign.Center,

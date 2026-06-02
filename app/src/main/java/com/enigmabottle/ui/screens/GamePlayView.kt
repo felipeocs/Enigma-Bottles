@@ -235,7 +235,7 @@ fun GamePlayView(
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    text = "STATUS",
+                                    text = TextRes.get("status_label", viewModel.currentLanguage),
                                     color = if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.6f),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
@@ -255,7 +255,7 @@ fun GamePlayView(
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = "Posicionadas",
+                                        text = TextRes.get("bottles_positioned", viewModel.currentLanguage),
                                         color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.7f),
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Medium
@@ -305,16 +305,11 @@ fun GamePlayView(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // Determine adaptive column bounds matching difficulty dimensions
-                    val columnsCount = when (activeBottlesCount) {
-                        3 -> 3
-                        5 -> 5
-                        8 -> 4
-                        10 -> 5
-                        13 -> 5
-                        16 -> 4
-                        else -> 4
-                    }
+                    // Determine adaptive column bounds based on screen width (responsiveness)
+                    val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+                    val screenWidthDp = configuration.screenWidthDp
+                    val maxColumnsPossible = ((screenWidthDp - 32) / 66).coerceAtLeast(3)
+                    val columnsCount = maxColumnsPossible.coerceAtMost(activeBottlesCount)
 
                     val bottleIndices = viewModel.boardSequence.indices.toList()
                     val gridChunks = bottleIndices.chunked(columnsCount)
@@ -426,29 +421,53 @@ fun GamePlayView(
                     }
 
                     if (viewModel.isXRayActive) {
-                        Text(
-                            text = "⚡ Raio-X Ativo! Toque em uma garrafa para validar.",
-                            color = Color(0xFF4F46E5),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 12.dp)
-                        )
+                        Row(
+                            modifier = Modifier.padding(top = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FlashOn,
+                                contentDescription = null,
+                                tint = Color(0xFF4F46E5),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = TextRes.get("xray_active_prompt", viewModel.currentLanguage),
+                                color = Color(0xFF4F46E5),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
 
                 // In-Game Store Powerups Action Area
                 item {
                     Spacer(modifier = Modifier.height(26.dp))
-                    Text(
-                        text = "⚡ " + TextRes.get("powerups", viewModel.currentLanguage),
-                        color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
-                    )
+                            .padding(start = 20.dp, end = 20.dp, bottom = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FlashOn,
+                            contentDescription = null,
+                            tint = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = TextRes.get("powerups", viewModel.currentLanguage),
+                            color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
+                    }
 
                     Row(
                         modifier = Modifier
@@ -749,7 +768,7 @@ fun GamePlayView(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "🎉 " + TextRes.get("win", viewModel.currentLanguage),
+                            text = TextRes.get("win", viewModel.currentLanguage),
                             fontSize = 22.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color(0xFF10B981),
@@ -788,12 +807,24 @@ fun GamePlayView(
                             color = Color(0xFF4F46E5),
                             fontSize = 16.sp
                         )
-                        Text(
-                            text = "🪙 +${viewModel.lastCoinsEarned}",
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFFD97706),
-                            fontSize = 16.sp
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MonetizationOn,
+                                contentDescription = null,
+                                tint = Color(0xFFD97706),
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "+${viewModel.lastCoinsEarned}",
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color(0xFFD97706),
+                                fontSize = 16.sp
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(12.dp))
                         if (viewModel.unlockedNewDifficultyThisTurn) {
@@ -852,7 +883,9 @@ fun GamePlayView(
                     }
                 },
                 text = {
-                    val promptText = if (viewModel.isDailyChallenge) {
+                    val promptText = if (viewModel.movesCount == 0) {
+                        TextRes.get("exit_no_moves_warn", viewModel.currentLanguage)
+                    } else if (viewModel.isDailyChallenge) {
                         TextRes.get("pause_prompt_daily", viewModel.currentLanguage)
                     } else {
                         TextRes.get("pause_prompt_classic", viewModel.currentLanguage)
@@ -870,13 +903,15 @@ fun GamePlayView(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Button(
-                            onClick = { viewModel.pauseAndExitGame() },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth().height(48.dp).testTag("save_and_pause_button")
-                        ) {
-                            Text(TextRes.get("save_and_pause_btn", viewModel.currentLanguage), color = Color.White, fontWeight = FontWeight.Bold)
+                        if (viewModel.movesCount > 0) {
+                            Button(
+                                onClick = { viewModel.pauseAndExitGame() },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth().height(48.dp).testTag("save_and_pause_button")
+                            ) {
+                                Text(TextRes.get("save_and_pause_btn", viewModel.currentLanguage), color = Color.White, fontWeight = FontWeight.Bold)
+                            }
                         }
 
                         Button(
@@ -885,7 +920,12 @@ fun GamePlayView(
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.fillMaxWidth().height(48.dp).testTag("confirm_quit_button")
                         ) {
-                            Text(TextRes.get("exit_lose_life_btn", viewModel.currentLanguage), color = Color.White, fontWeight = FontWeight.Bold)
+                            val btnText = if (viewModel.movesCount == 0) {
+                                TextRes.get("exit_without_penalty_btn", viewModel.currentLanguage)
+                            } else {
+                                TextRes.get("exit_lose_life_btn", viewModel.currentLanguage)
+                            }
+                            Text(btnText, color = Color.White, fontWeight = FontWeight.Bold)
                         }
 
                         TextButton(
@@ -929,14 +969,26 @@ fun GamePlayView(
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier.padding(24.dp)
                 ) {
-                    Text(
-                        text = "🧪 ENIGMA BOTTLES",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color(0xFFFFD700),
-                        letterSpacing = 4.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Science,
+                            contentDescription = null,
+                            tint = Color(0xFFFFD700),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "ENIGMA BOTTLES",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color(0xFFFFD700),
+                            letterSpacing = 4.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = TextRes.get("game_paused_title", viewModel.currentLanguage),

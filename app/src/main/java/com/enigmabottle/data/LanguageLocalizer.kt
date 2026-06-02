@@ -17,31 +17,34 @@ enum class Language(val displayName: String, val code: String) {
 }
 
 object TextRes {
-    private var appContext: Context? = null
-    private var currentConfiguredLang: String? = null
+    private var baseContext: Context? = null
+    private var localizedContext: Context? = null
+    private var currentLangCode: String = ""
 
     fun init(context: Context) {
-        appContext = context.applicationContext
+        baseContext = context
+        localizedContext = null
+        currentLangCode = ""
     }
 
     fun get(key: String, lang: String): String {
-        val ctx = appContext ?: return key
+        val base = baseContext ?: return key
+        val targetLang = if (lang.isEmpty()) "pt" else lang
         try {
-            if (currentConfiguredLang != lang) {
-                val locale = Locale(lang)
+            if (currentLangCode != targetLang || localizedContext == null) {
+                currentLangCode = targetLang
+                val locale = Locale(targetLang)
                 Locale.setDefault(locale)
-                val resources = ctx.resources
-                val config = resources.configuration
+                val configuration = Configuration(base.resources.configuration)
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    config.setLocales(android.os.LocaleList(locale))
+                    configuration.setLocales(android.os.LocaleList(locale))
                 } else {
                     @Suppress("DEPRECATION")
-                    config.locale = locale
+                    configuration.setLocale(locale)
                 }
-                @Suppress("DEPRECATION")
-                resources.updateConfiguration(config, resources.displayMetrics)
-                currentConfiguredLang = lang
+                localizedContext = base.createConfigurationContext(configuration)
             }
+            val ctx = localizedContext ?: base
             val resourceId = ctx.resources.getIdentifier(key, "string", ctx.packageName)
             if (resourceId != 0) {
                 return ctx.resources.getString(resourceId)

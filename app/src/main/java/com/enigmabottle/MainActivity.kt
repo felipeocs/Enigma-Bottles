@@ -24,6 +24,8 @@ import com.enigmabottle.data.*
 import com.enigmabottle.ui.screens.*
 import com.enigmabottle.ui.theme.MyApplicationTheme
 import com.enigmabottle.viewmodel.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import kotlinx.coroutines.delay
 import androidx.lifecycle.lifecycleScope
 import androidx.compose.ui.platform.LocalContext
@@ -92,6 +94,28 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val currentLanguage = viewModel.currentLanguage
+            val context = LocalContext.current
+
+            LaunchedEffect(currentLanguage) {
+                val locale = java.util.Locale(currentLanguage)
+                java.util.Locale.setDefault(locale)
+                val resources = context.resources
+                val configuration = resources.configuration
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    configuration.setLocales(android.os.LocaleList(locale))
+                } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    @Suppress("DEPRECATION")
+                    configuration.setLocale(locale)
+                } else {
+                    @Suppress("DEPRECATION")
+                    configuration.locale = locale
+                }
+                @Suppress("DEPRECATION")
+                resources.updateConfiguration(configuration, resources.displayMetrics)
+                TextRes.init(context)
+            }
+
             val currentScreen = viewModel.currentScreen
             val backEnabled = currentScreen != Screen.HOME && currentScreen != Screen.SPLASH
             BackHandler(enabled = backEnabled) {
@@ -204,18 +228,30 @@ class MainActivity : ComponentActivity() {
                                                             color = if (isCurrent) Color.White else (if (isLight) Color(0xFF475569) else Color.White)
                                                         )
                                                         Spacer(modifier = Modifier.height(4.dp))
-                                                        val iconText = when(day) {
-                                                            1 -> "🪙20"
-                                                            2 -> "🪙35"
-                                                            3 -> "💡" + TextRes.get("hint_btn", viewModel.currentLanguage)
-                                                            else -> "🪙65"
+                                                        Row(
+                                                            verticalAlignment = Alignment.CenterVertically,
+                                                            horizontalArrangement = Arrangement.Center
+                                                        ) {
+                                                            val (icon, tint, text) = when(day) {
+                                                                1 -> Triple(Icons.Default.MonetizationOn, Color(0xFFFFC107), "20")
+                                                                2 -> Triple(Icons.Default.MonetizationOn, Color(0xFFFFC107), "35")
+                                                                3 -> Triple(Icons.Default.Lightbulb, Color(0xFF10B981), TextRes.get("hint_btn", viewModel.currentLanguage))
+                                                                else -> Triple(Icons.Default.MonetizationOn, Color(0xFFFFC107), "65")
+                                                            }
+                                                            Icon(
+                                                                imageVector = icon,
+                                                                contentDescription = null,
+                                                                tint = if (isCurrent) Color.White else tint,
+                                                                modifier = Modifier.size(14.dp)
+                                                            )
+                                                            Spacer(modifier = Modifier.width(4.dp))
+                                                            Text(
+                                                                text = text,
+                                                                fontSize = 11.sp,
+                                                                fontWeight = FontWeight.Black,
+                                                                color = if (isCurrent) Color.White else (if (isLight) Color(0xFF1E293B) else Color.White)
+                                                            )
                                                         }
-                                                        Text(
-                                                            text = iconText,
-                                                            fontSize = 11.sp,
-                                                            fontWeight = FontWeight.Black,
-                                                            color = if (isCurrent) Color.White else (if (isLight) Color(0xFF1E293B) else Color.White)
-                                                        )
                                                     }
                                                 }
                                             }
@@ -258,17 +294,29 @@ class MainActivity : ComponentActivity() {
                                                             color = if (isCurrent) Color.White else (if (isLight) Color(0xFF475569) else Color.White)
                                                         )
                                                         Spacer(modifier = Modifier.height(4.dp))
-                                                        val iconText = when(day) {
-                                                            5 -> "⚡" + TextRes.get("reveal_btn", viewModel.currentLanguage)
-                                                            6 -> "🪙110"
-                                                            else -> TextRes.get("day_indicator_mega", viewModel.currentLanguage)
+                                                        Row(
+                                                            verticalAlignment = Alignment.CenterVertically,
+                                                            horizontalArrangement = Arrangement.Center
+                                                        ) {
+                                                            val (icon, tint, text) = when(day) {
+                                                                5 -> Triple(Icons.Default.Visibility, Color(0xFFF59E0B), TextRes.get("reveal_btn", viewModel.currentLanguage))
+                                                                6 -> Triple(Icons.Default.MonetizationOn, Color(0xFFFFC107), "110")
+                                                                else -> Triple(Icons.Default.CardGiftcard, Color(0xFF8B5CF6), TextRes.get("day_indicator_mega", viewModel.currentLanguage))
+                                                            }
+                                                            Icon(
+                                                                imageVector = icon,
+                                                                contentDescription = null,
+                                                                tint = if (isCurrent) Color.White else tint,
+                                                                modifier = Modifier.size(14.dp)
+                                                            )
+                                                            Spacer(modifier = Modifier.width(4.dp))
+                                                            Text(
+                                                                text = text,
+                                                                fontSize = 11.sp,
+                                                                fontWeight = FontWeight.Black,
+                                                                color = if (isCurrent) Color.White else (if (isLight) Color(0xFF1E293B) else Color.White)
+                                                            )
                                                         }
-                                                        Text(
-                                                            text = iconText,
-                                                            fontSize = 11.sp,
-                                                            fontWeight = FontWeight.Black,
-                                                            color = if (isCurrent) Color.White else (if (isLight) Color(0xFF1E293B) else Color.White)
-                                                        )
                                                     }
                                                 }
                                             }
@@ -329,7 +377,7 @@ class MainActivity : ComponentActivity() {
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Text(
-                                            text = "🧪 Jogo em Andamento",
+                                            text = TextRes.get("game_in_progress_title", viewModel.currentLanguage),
                                             fontSize = 20.sp,
                                             fontWeight = FontWeight.Black,
                                             color = if (isLight) Color(0xFF1E293B) else Color.White
@@ -337,12 +385,16 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                                 text = {
+                                    val savedDifficulty = viewModel.activeSavedGame?.difficulty ?: ""
+                                    val difficultyText = viewModel.getDifficultyDisplayName(savedDifficulty)
+                                    val movesCount = viewModel.activeSavedGame?.movesCount ?: 0
+                                    val dialogDesc = String.format(
+                                        TextRes.get("game_in_progress_desc", viewModel.currentLanguage),
+                                        difficultyText,
+                                        movesCount
+                                    )
                                     Text(
-                                        text = "Você já tem uma partida clássica salva de nível " +
-                                                "\"${viewModel.activeSavedGame?.difficulty ?: ""}\" em andamento " +
-                                                "com ${viewModel.activeSavedGame?.movesCount ?: 0} jogadas.\n\n" +
-                                                "Deseja continuar a partida anterior ou iniciar um novo jogo?\n\n" +
-                                                "⚠️ Nota: se você optar por iniciar um novo jogo, perderá 1 vida!",
+                                        text = dialogDesc,
                                         fontSize = 14.sp,
                                         color = if (isLight) Color(0xFF475569) else Color.White.copy(alpha = 0.85f),
                                         textAlign = TextAlign.Center
@@ -363,7 +415,7 @@ class MainActivity : ComponentActivity() {
                                             shape = RoundedCornerShape(12.dp),
                                             modifier = Modifier.fillMaxWidth().height(48.dp)
                                         ) {
-                                            Text("Continuar Partida Salva", color = Color.White, fontWeight = FontWeight.Bold)
+                                            Text(TextRes.get("continue_saved_match_btn", viewModel.currentLanguage), color = Color.White, fontWeight = FontWeight.Bold)
                                         }
 
                                         Button(
@@ -374,14 +426,14 @@ class MainActivity : ComponentActivity() {
                                             shape = RoundedCornerShape(12.dp),
                                             modifier = Modifier.fillMaxWidth().height(48.dp)
                                         ) {
-                                            Text("Descartar e Iniciar Novo (-1 Vida)", color = Color.White, fontWeight = FontWeight.Bold)
+                                            Text(TextRes.get("discard_and_start_new_btn", viewModel.currentLanguage), color = Color.White, fontWeight = FontWeight.Bold)
                                         }
 
                                         TextButton(
                                             onClick = { viewModel.showClassicConfirmDialog = false }
                                         ) {
                                             Text(
-                                                text = "Cancelar",
+                                                text = TextRes.get("cancel_btn", viewModel.currentLanguage),
                                                 color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f),
                                                 fontWeight = FontWeight.SemiBold
                                             )
@@ -460,7 +512,7 @@ class MainActivity : ComponentActivity() {
                                     confirmButton = { /* lock progression */ },
                                     title = {
                                         Text(
-                                            "🎬 Assistindo ao Vídeo...",
+                                            TextRes.get("watching_ad_title", viewModel.currentLanguage),
                                             color = Color.White,
                                             fontWeight = FontWeight.Bold,
                                             modifier = Modifier.fillMaxWidth()
@@ -472,7 +524,7 @@ class MainActivity : ComponentActivity() {
                                             horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
                                             Text(
-                                                text = "Aguarde o término do anúncio para receber seu prêmio Enigma Bottles.",
+                                                text = TextRes.get("watching_ad_desc", viewModel.currentLanguage),
                                                 color = Color.White.copy(alpha = 0.75f),
                                                 fontSize = 13.sp,
                                                 modifier = Modifier.padding(bottom = 16.dp)

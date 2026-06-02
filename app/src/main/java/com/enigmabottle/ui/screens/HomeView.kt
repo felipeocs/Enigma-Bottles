@@ -79,7 +79,12 @@ fun HomeView(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("🪙", fontSize = 18.sp)
+                            Icon(
+                                imageVector = Icons.Default.MonetizationOn,
+                                contentDescription = null,
+                                tint = if (isLight) Color(0xFFB45309) else Color(0xFFFFC107),
+                                modifier = Modifier.size(20.dp)
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = "${profile.coins}",
@@ -109,7 +114,12 @@ fun HomeView(
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("🎁", fontSize = 18.sp)
+                                Icon(
+                                    imageVector = Icons.Default.CardGiftcard,
+                                    contentDescription = null,
+                                    tint = if (isLight) Color(0xFF10B981) else Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
                         }
 
@@ -124,7 +134,12 @@ fun HomeView(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("❤️", fontSize = 18.sp)
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = null,
+                                    tint = Color(0xFFEF4444),
+                                    modifier = Modifier.size(20.dp)
+                                )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 val hasInfinite = profile.isAdFree && profile.infiniteLivesEndTime > System.currentTimeMillis()
                                 val remainingMin = if (hasInfinite) {
@@ -174,12 +189,12 @@ fun HomeView(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .padding(bottom = 12.dp)
-                            .size(110.dp)
+                            .size(160.dp)
                     ) {
                         // Outer subtle glow halo
                         Box(
                             modifier = Modifier
-                                .size(105.dp)
+                                .size(155.dp)
                                 .clip(CircleShape)
                                 .background(
                                     Brush.radialGradient(
@@ -193,9 +208,9 @@ fun HomeView(
                         // Foreground bottle logo
                         Image(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                            contentDescription = "Enigma Bottles Potion Logo",
+                            contentDescription = TextRes.get("app_logo_description", viewModel.currentLanguage),
                             modifier = Modifier
-                                .size(88.dp)
+                                .size(140.dp)
                         )
                     }
                     Text(
@@ -314,7 +329,12 @@ fun HomeView(
                                 .border(2.dp, Color(0xFFF97316), RoundedCornerShape(14.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("📅", fontSize = 24.sp)
+                            Icon(
+                                imageVector = Icons.Default.CalendarMonth,
+                                contentDescription = null,
+                                tint = Color(0xFFF97316),
+                                modifier = Modifier.size(26.dp)
+                            )
                         }
 
                         Spacer(modifier = Modifier.width(16.dp))
@@ -348,7 +368,7 @@ fun HomeView(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Play",
+                                contentDescription = TextRes.get("play", viewModel.currentLanguage),
                                 tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -358,7 +378,7 @@ fun HomeView(
             }
 
             // Unified Game Mode Hub & Difficulty Grid
-            val classicLabelSuffix = if (viewModel.currentLanguage == "pt") "Modo Clássico" else if (viewModel.currentLanguage == "es") "Modo Clásico" else "Classic Mode"
+            val classicLabelSuffix = TextRes.get("classic_mode_label", viewModel.currentLanguage)
             item {
                 Text(
                     text = TextRes.get("new_game", viewModel.currentLanguage) + " ($classicLabelSuffix)",
@@ -398,14 +418,13 @@ fun HomeView(
                 } else {
                     viewModel.getWinsTargetForDifficulty(levels[if (index > 0) index - 1 else 0].name)
                 }
-
-                val (stageEmoji, stageQuestName, starRating) = when (lvl.name) {
-                    "Fácil" -> Triple("🟢", if (viewModel.currentLanguage == "pt") "Iniciação do Aprendiz 🧪" else if (viewModel.currentLanguage == "es") "Iniciación de Aprendiz 🧪" else "Apprentice Initiation 🧪", "⭐")
-                    "Médio" -> Triple("🔵", if (viewModel.currentLanguage == "pt") "Mistura Concentrada 🔮" else if (viewModel.currentLanguage == "es") "Mezcla Concentrada 🔮" else "Concentrated Mix 🔮", "⭐⭐")
-                    "Difícil" -> Triple("🟡", if (viewModel.currentLanguage == "pt") "Fórmula Instável ⚙️" else if (viewModel.currentLanguage == "es") "Fórmula Inestable ⚙️" else "Unstable Formula ⚙️", "⭐⭐⭐")
-                    "Especialista" -> Triple("🟠", if (viewModel.currentLanguage == "pt") "Reação em Cadeia ⚡" else if (viewModel.currentLanguage == "es") "Reacción en Cadena ⚡" else "Chain Reaction ⚡", "⭐⭐⭐⭐")
-                    "Épico" -> Triple("🔴", if (viewModel.currentLanguage == "pt") "Elixir Proibido 💀" else if (viewModel.currentLanguage == "es") "Elixir Prohibido 💀" else "Forbidden Elixir 💀", "⭐⭐⭐⭐⭐")
-                    else -> Triple("🟣", if (viewModel.currentLanguage == "pt") "Alquimia Lendária 👑" else if (viewModel.currentLanguage == "es") "Alquimia Legendaria 👑" else "Legendary Alchemy 👑", "🏆🏆🏆🏆🏆")
+                val (stageIcon, stageIconTint) = when (lvl.name) {
+                    "Fácil" -> Pair(Icons.Default.Science, Color(0xFF10B981))
+                    "Médio" -> Pair(Icons.Default.Whatshot, Color(0xFF3B82F6))
+                    "Difícil" -> Pair(Icons.Default.Opacity, Color(0xFFF59E0B))
+                    "Especialista" -> Pair(Icons.Default.WorkspacePremium, Color(0xFFF97316))
+                    "Épico" -> Pair(Icons.Default.Bolt, Color(0xFFEF4444))
+                    else -> Pair(Icons.Default.AllInclusive, Color(0xFF8B5CF6))
                 }
 
                 Card(
@@ -436,7 +455,7 @@ fun HomeView(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Large circular stage indicator with a cool emoji
+                        // Large circular stage indicator with a Google Material Icon
                         Box(
                             modifier = Modifier
                                 .size(48.dp)
@@ -445,7 +464,21 @@ fun HomeView(
                                 .border(2.dp, if (isUnlocked) lvl.accentColor else Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(14.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = if (isUnlocked) stageEmoji else "🔒", fontSize = 22.sp)
+                            if (isUnlocked) {
+                                Icon(
+                                    imageVector = stageIcon,
+                                    contentDescription = null,
+                                    tint = stageIconTint,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = null,
+                                    tint = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.4f),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
 
                         Spacer(modifier = Modifier.width(14.dp))
@@ -458,35 +491,42 @@ fun HomeView(
                                     fontWeight = FontWeight.Black,
                                     fontSize = 17.sp
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = if (isUnlocked) starRating else "",
-                                    fontSize = 11.sp
-                                )
                             }
                             
                             Spacer(modifier = Modifier.height(2.dp))
                             
+                            // Subtítulo com a dificuldade
                             Text(
-                                text = if (isUnlocked) stageQuestName else TextRes.get("fase_bloqueada", viewModel.currentLanguage),
-                                color = if (isUnlocked) lvl.accentColor else (if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.4f)),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                text = TextRes.get("${lvl.langKey}_short", viewModel.currentLanguage),
+                                color = if (isUnlocked) lvl.accentColor else (if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.4f)),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
                             )
+                            
+                            Spacer(modifier = Modifier.height(2.dp))
+                            
+                            if (!isUnlocked) {
+                                Text(
+                                    text = TextRes.get("fase_bloqueada", viewModel.currentLanguage),
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.4f),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
 
                             if (isUnlocked) {
-                                val bottlesCount = viewModel.getBottleCountForDifficulty(lvl.name)
+                                val bottlesCount = lvl.name.let {
+                                    when(it) {
+                                        "Fácil" -> 3
+                                        "Médio" -> 5
+                                        "Difícil" -> 8
+                                        "Especialista" -> 10
+                                        "Épico" -> 13
+                                        else -> 16
+                                    }
+                                }
                                 Text(
-                                    text = String.format(java.util.Locale.getDefault(), if (viewModel.currentLanguage == "pt") "Desafio: %d garrafas" else if (viewModel.currentLanguage == "es") "Reto: %d botellas" else "Challenge: %d bottles", lvl.name.let {
-                                        when(it) {
-                                            "Fácil" -> 3
-                                            "Médio" -> 5
-                                            "Difícil" -> 8
-                                            "Especialista" -> 10
-                                            "Épico" -> 13
-                                            else -> 16
-                                        }
-                                    }),
+                                    text = String.format(TextRes.get("desafio_garrafas", viewModel.currentLanguage), bottlesCount),
                                     color = if (isLight) Color(0xFF475569) else Color.White.copy(alpha = 0.6f),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Medium,
@@ -512,7 +552,12 @@ fun HomeView(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text("🏆", fontSize = 14.sp)
+                                        Icon(
+                                            imageVector = Icons.Default.EmojiEvents,
+                                            contentDescription = null,
+                                            tint = Color(0xFFFFD700),
+                                            modifier = Modifier.size(16.dp)
+                                        )
                                         Spacer(modifier = Modifier.width(4.dp))
                                         Text(
                                             text = "$winsCount/$winsNeeded",
@@ -531,7 +576,7 @@ fun HomeView(
                                         .padding(horizontal = 8.dp, vertical = 4.dp)
                                 ) {
                                     Text(
-                                        text = "FREE PLAY",
+                                        text = TextRes.get("free_play_unlocked", viewModel.currentLanguage),
                                         color = Color(0xFF10B981),
                                         fontWeight = FontWeight.Black,
                                         fontSize = 10.sp
@@ -607,12 +652,24 @@ fun HomeView(
                         modifier = Modifier.padding(18.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "🎬 " + TextRes.get("watch_ad", viewModel.currentLanguage),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            color = if (isLight) Color(0xFF3730A3) else Color.White
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PlayCircle,
+                                contentDescription = null,
+                                tint = if (isLight) Color(0xFF4F46E5) else Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = TextRes.get("watch_ad", viewModel.currentLanguage),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = if (isLight) Color(0xFF3730A3) else Color.White
+                            )
+                        }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = TextRes.get("watch_ad_desc", viewModel.currentLanguage),
@@ -632,7 +689,19 @@ fun HomeView(
                                 modifier = Modifier.weight(1f),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("+75", color = Color(0xFF78350F), fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.MonetizationOn,
+                                        contentDescription = null,
+                                        tint = Color(0xFF78350F),
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("+75", color = Color(0xFF78350F), fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                }
                             }
                             Button(
                                 onClick = { viewModel.launchAdRewardFlow("lives") },
@@ -640,7 +709,19 @@ fun HomeView(
                                 modifier = Modifier.weight(1f),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("+1 Vida", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Favorite,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(TextRes.get("plus_one_life", viewModel.currentLanguage), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                }
                             }
                         }
                     }

@@ -62,7 +62,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
     fun addCoins(count: Int) {
         viewModelScope.launch {
             repository.updateProfile { p -> p.copy(coins = p.coins + count) }
-            showToast("+$count")
         }
     }
 
@@ -77,7 +76,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                     coins = p.coins + 1000
                 )
             }
-            showToast(TextRes.get("combo_claimed_toast", currentLanguage))
         }
     }
 
@@ -90,28 +88,24 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
     fun addHints(count: Int) {
         viewModelScope.launch {
             repository.updateProfile { p -> p.copy(hintCount = p.hintCount + count) }
-            showToast("+$count " + TextRes.get("hints_plural", currentLanguage) + "!")
         }
     }
 
     fun addXRay(count: Int) {
         viewModelScope.launch {
             repository.updateProfile { p -> p.copy(xRayCount = p.xRayCount + count) }
-            showToast("+$count " + TextRes.get("xrays_plural", currentLanguage) + "!")
         }
     }
 
     fun addReveal(count: Int) {
         viewModelScope.launch {
             repository.updateProfile { p -> p.copy(revealCount = p.revealCount + count) }
-            showToast("+$count " + TextRes.get("reveals_plural", currentLanguage) + "!")
         }
     }
 
     fun addFreeze(count: Int) {
         viewModelScope.launch {
             repository.updateProfile { p -> p.copy(freezeCount = p.freezeCount + count) }
-            showToast("+$count " + TextRes.get("freezes_plural", currentLanguage) + "!")
         }
     }
 
@@ -296,7 +290,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                             lives = newLives,
                             lastLifeRegenTimeMillis = System.currentTimeMillis() - extraTime
                         ) }
-                        showToast(TextRes.get("ad_completed", currentLanguage))
                     } else {
                         // Calculate countdown text
                         val remainingMs = fifteenMinutesMs - diff
@@ -360,7 +353,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 currentScreen = Screen.GAME_PLAY
                 // Note: timer is delayed; starts only after selecting the first bottle
             } else {
-                showToast("Nenhuma partida salva encontrada.")
+                showToast(TextRes.get("no_saved_match_found", currentLanguage))
             }
         }
     }
@@ -460,16 +453,31 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
     fun exitGameVoluntarily() {
         viewModelScope.launch {
             stopTimer()
-            triggerVibration?.invoke(VibrationType.FAILURE)
-            val p = userProfile.value
-            val hasInfinite = p.isAdFree && p.infiniteLivesEndTime > System.currentTimeMillis()
-            if (!hasInfinite) {
-                // Lose a life as warning
-                repository.changeLives(-1)
-                showToast(TextRes.get("exit_confirm", currentLanguage) + " (-1 Vida)")
+            if (movesCount == 0) {
+                // Sair sem penalidade de vida e sem gravar derrota no historico
             } else {
-                showToast("Vidas Infinitas Ativas! Nenhuma vida perdida. 👑")
+                triggerVibration?.invoke(VibrationType.FAILURE)
+                val p = userProfile.value
+                val hasInfinite = p.isAdFree && p.infiniteLivesEndTime > System.currentTimeMillis()
+                if (!hasInfinite) {
+                    // Lose a life as warning
+                    repository.changeLives(-1)
+                }
+                
+                // Salvar registro de derrota
+                val modeKey = if (isDailyChallenge) "daily" else "standard"
+                val record = GameRecord(
+                    mode = modeKey,
+                    difficulty = currentDifficulty,
+                    dayKey = dailyDayKey,
+                    moves = movesCount,
+                    timeInSeconds = elapsedTimeSeconds,
+                    score = 0,
+                    won = false
+                )
+                repository.saveGameRecord(record)
             }
+
             repository.clearSavedGame() // invalidate standard progress
             activeSavedGame = null
             quitDialogVisible = false
@@ -534,12 +542,12 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
 
                 if (success) {
                     triggerVibration?.invoke(VibrationType.POWERUP)
-                    val resultText = if (isCorrect) "✓ Correta!" else "✗ Incorreta."
-                    xRayFeedbackText = if (usesXRayCount) {
-                        "Garrafa ${index + 1}: $resultText (Bônus usado)"
+                    val key = if (usesXRayCount) {
+                        if (isCorrect) "xray_feedback_correct_bonus" else "xray_feedback_incorrect_bonus"
                     } else {
-                        "Garrafa ${index + 1}: $resultText"
+                        if (isCorrect) "xray_feedback_correct" else "xray_feedback_incorrect"
                     }
+                    xRayFeedbackText = String.format(TextRes.get(key, currentLanguage), index + 1)
                     isXRayActive = false
                     delay(3000)
                     xRayFeedbackText = null
@@ -666,8 +674,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             completedLevelsCount = newLevelsCount
         ) }
 
-        showToast("+ $coinsReward " + TextRes.get("coins", currentLanguage) + "!")
-
         if (!p.isAdFree && (newLevelsCount % 5 == 0)) {
             launchInterstitialAd()
         }
@@ -704,15 +710,9 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 if (incorrectIndices.isNotEmpty()) {
                     val targetIndex = incorrectIndices.random()
                     activeHintIndex = targetIndex
-                    if (usesHintCount) {
-                        showToast(TextRes.get("hint_btn", currentLanguage) + ": Garrafa #${targetIndex + 1} revelada! (Bônus usado)")
-                    } else {
-                        showToast(TextRes.get("hint_btn", currentLanguage) + ": Garrafa #${targetIndex + 1} revelada!")
-                    }
                     delay(3000)
                     activeHintIndex = null
                 } else {
-                    showToast("Todas as garrafas estão de fato corretas!")
                 }
             } else {
                 showToast(TextRes.get("no_coins", currentLanguage))
@@ -742,11 +742,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 triggerVibration?.invoke(VibrationType.POWERUP)
                 isRevealActive = true
                 revealTimeRemaining = 3
-                if (usesRevealCount) {
-                    showToast(TextRes.get("reveal_btn", currentLanguage) + "! (Bônus usado)")
-                } else {
-                    showToast(TextRes.get("reveal_btn", currentLanguage) + "!")
-                }
                 while (revealTimeRemaining > 0) {
                     delay(1000)
                     if (!isGamePaused) {
@@ -765,14 +760,12 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
         val p = userProfile.value
         if (p.xRayCount > 0) {
             isXRayActive = true
-            showToast("Clique em uma garrafa para validar a posição. (Grátis via Bônus!)")
         } else {
             if (p.coins < 20) {
                 showToast(TextRes.get("no_coins", currentLanguage))
                 return
             }
             isXRayActive = true
-            showToast("Clique em uma garrafa para validar a posição.")
         }
     }
 
@@ -798,11 +791,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 triggerVibration?.invoke(VibrationType.POWERUP)
                 isFreezeActive = true
                 freezeTimeRemaining = 15
-                if (usesFreezeCount) {
-                    showToast(TextRes.get("freeze_btn", currentLanguage) + " por 15 segundos! (Bônus usado)")
-                } else {
-                    showToast(TextRes.get("freeze_btn", currentLanguage) + " por 15 segundos!")
-                }
             } else {
                 showToast(TextRes.get("no_coins", currentLanguage))
             }
@@ -820,16 +808,12 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             adSimulationVisible = false
             if (adTargetReward == "coins") {
                 repository.addCoins(75)
-                showToast("Anúncio concluído! +75 Moedas.")
             } else if (adTargetReward == "lives") {
                 repository.restoreLives()
-                showToast("Anúncio concluído! +1 Vida ganha.")
             } else if (adTargetReward == "hint") {
                 repository.updateProfile { it.copy(hintCount = it.hintCount + 1) }
-                showToast("Anúncio concluído! +1 Dica Adicionada.")
             } else if (adTargetReward == "xray") {
                 repository.updateProfile { it.copy(xRayCount = it.xRayCount + 1) }
-                showToast("Anúncio concluído! +1 Raio-X Adicionado.")
             }
         }
     }
@@ -853,7 +837,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
     fun buyAdFreePlan() {
         viewModelScope.launch {
             repository.updateProfile { it.copy(isAdFree = true) }
-            showToast("Sucesso! Plano Sem Anúncios Vitalício Ativado! 👑")
         }
     }
 
@@ -861,12 +844,12 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
         viewModelScope.launch {
             val p = repository.getOrInitializeProfile()
             if (!p.isAdFree) {
-                showToast("Função exclusiva para usuários do plano Vitalício!")
+                showToast(TextRes.get("premium_feature_exclusive_toast", currentLanguage))
                 return@launch
             }
             val todayStr = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
             if (p.lastInfiniteLivesActivationDate == todayStr) {
-                showToast("Você já ativou as vidas infinitas hoje!")
+                showToast(TextRes.get("infinite_lives_already_used_toast", currentLanguage))
                 return@launch
             }
             val durationMs = 30 * 60 * 1000L
@@ -877,7 +860,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 lastInfiniteLivesActivationDate = todayStr,
                 lives = it.lives.coerceAtLeast(5)
             ) }
-            showToast("Vidas infinitas ativadas por 30 minutos! ❤️👑")
         }
     }
 
@@ -889,7 +871,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             if (purchased.contains(skinId)) {
                 // Already purchased, simply equip
                 repository.updateProfile { it.copy(activeSkinId = skinId) }
-                showToast("Skin Equipada!")
             } else {
                 if (repository.spendCoins(cost)) {
                     purchased.add(skinId)
@@ -898,7 +879,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                         purchasedSkinsCsv = listString,
                         activeSkinId = skinId
                     ) }
-                    showToast("Skin Comprada e Equipada!")
                 } else {
                     showToast(TextRes.get("no_coins", currentLanguage))
                 }
@@ -912,7 +892,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             val purchased = p.getPurchasedBgs().toMutableSet()
             if (purchased.contains(bgId)) {
                 repository.updateProfile { it.copy(activeBgId = bgId) }
-                showToast("Fundo de Tela Equipado!")
             } else {
                 if (repository.spendCoins(cost)) {
                     purchased.add(bgId)
@@ -921,7 +900,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                         purchasedBgsCsv = listString,
                         activeBgId = bgId
                     ) }
-                    showToast("Tema de Fundo Comprado e Equipado!")
                 } else {
                     showToast(TextRes.get("no_coins", currentLanguage))
                 }
@@ -976,7 +954,6 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             stopTimer()
             saveCurrentGameProgress()
             quitDialogVisible = false
-            showToast("Progresso salvo! Até a próxima.")
             currentScreen = Screen.HOME
         }
     }
@@ -987,7 +964,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             val p = userProfile.value
             val hasInfinite = p.isAdFree && p.infiniteLivesEndTime > System.currentTimeMillis()
             if (p.lives <= 1 && !hasInfinite) {
-                showToast("Vidas insuficientes para iniciar novo jogo e descartar o atual!")
+                showToast(TextRes.get("insufficient_lives_discard_toast", currentLanguage))
                 return@launch
             }
             if (!hasInfinite) {
@@ -1116,51 +1093,34 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             
             startDailyChallenge(nextDayKey, nextDifficulty)
         } catch (e: Exception) {
-            showToast("Erro ao avançar para o próximo desafio.")
+            showToast(TextRes.get("error_next_challenge_toast", currentLanguage))
         }
     }
 
     // Math scoring formula (guarantees strictly higher rewards for faster time and fewer moves)
     private fun calculateScore(moves: Int, time: Int, difficulty: String): Int {
-        val baseScore = when(difficulty) {
-            "Fácil" -> 100
-            "Médio" -> 250
-            "Difícil" -> 500
-            "Especialista" -> 800
-            "Épico" -> 1200
-            else -> 1800 // Mestre
+        val (maxScore, minScore, movePenalty, timePenalty) = when(difficulty) {
+            "Fácil" -> Triple(1000, 100, Pair(30, 5))
+            "Médio" -> Triple(2000, 200, Pair(40, 6))
+            "Difícil" -> Triple(3500, 300, Pair(50, 7))
+            "Especialista" -> Triple(5000, 400, Pair(60, 8))
+            "Épico" -> Triple(7000, 500, Pair(70, 9))
+            else -> Triple(10000, 600, Pair(80, 10)) // Mestre
+        }.let { (max, min, penalties) ->
+            Quadruple(max, min, penalties.first, penalties.second)
         }
 
-        val expectedMoves = when(difficulty) {
-            "Fácil" -> 3
-            "Médio" -> 6
-            "Difícil" -> 10
-            "Especialista" -> 15
-            "Épico" -> 20
-            else -> 25
-        }
-        val movesBonus = if (moves <= expectedMoves) {
-            300 + (expectedMoves - moves) * 50
-        } else {
-            (300 - (moves - expectedMoves) * 20).coerceAtLeast(50)
-        }
-
-        val expectedTimeInSeconds = when(difficulty) {
-            "Fácil" -> 15
-            "Médio" -> 30
-            "Difícil" -> 60
-            "Especialista" -> 100
-            "Épico" -> 150
-            else -> 200
-        }
-        val timeBonus = if (time <= expectedTimeInSeconds) {
-            200 + (expectedTimeInSeconds - time) * 10
-        } else {
-            (200 - (time - expectedTimeInSeconds) * 2).coerceAtLeast(20)
-        }
-
-        return baseScore + movesBonus + timeBonus
+        val calculated = maxScore - (moves * movePenalty) - (time * timePenalty)
+        return calculated.coerceAtLeast(minScore)
     }
+
+    // Helper data class or inline utility to clean up Destructuring
+    private data class Quadruple<out A, out B, out C, out D>(
+        val first: A,
+        val second: B,
+        val third: C,
+        val fourth: D
+    )
 
     fun showToast(msg: String) {
         toastMessage = msg
@@ -1223,7 +1183,22 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
     }
 
     private fun getCurrentDifficultyShort(): String {
-        return when(currentDifficulty) {
+        return getDifficultyShortName(currentDifficulty)
+    }
+
+    fun getDifficultyDisplayName(diff: String): String {
+        return when(diff) {
+            "Fácil" -> TextRes.get("easy", currentLanguage)
+            "Médio" -> TextRes.get("medium", currentLanguage)
+            "Difícil" -> TextRes.get("hard", currentLanguage)
+            "Especialista" -> TextRes.get("expert", currentLanguage)
+            "Épico" -> TextRes.get("epic", currentLanguage)
+            else -> TextRes.get("master", currentLanguage)
+        }
+    }
+
+    fun getDifficultyShortName(diff: String): String {
+        return when(diff) {
             "Fácil" -> TextRes.get("easy_short", currentLanguage)
             "Médio" -> TextRes.get("medium_short", currentLanguage)
             "Difícil" -> TextRes.get("hard_short", currentLanguage)
@@ -1345,7 +1320,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             val pendingDays = (1..dayOfToday).filter { it !in claimedSet }
 
             if (pendingDays.isEmpty()) {
-                showToast("Nenhum prêmio disponível para resgate no momento.")
+                showToast(TextRes.get("no_rewards_available_toast", currentLanguage))
                 dailyRewardClaimedThisTurn = true
                 return@launch
             }

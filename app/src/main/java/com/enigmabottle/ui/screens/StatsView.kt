@@ -40,17 +40,7 @@ fun StatsView(
     val totalGamesPlayed = gameList.size
     val totalWins = gameList.count { it.won }
     val winRatio = if (totalGamesPlayed > 0) (totalWins.toFloat() / totalGamesPlayed * 100).toInt() else 0
-
-    val averageMoves = if (totalWins > 0) {
-        gameList.filter { it.won }.map { it.moves }.average().toInt()
-    } else 0
-
-    val averageTime = if (totalWins > 0) {
-        val totalSeconds = gameList.filter { it.won }.map { it.timeInSeconds }.average().toInt()
-        val m = totalSeconds / 60
-        val s = totalSeconds % 60
-        String.format("%02d:%02d", m, s)
-    } else "00:00"
+    val difficultyNames = listOf("Fácil", "Médio", "Difícil", "Especialista", "Épico", "Mestre")
 
     val maxDifficultyUnlocked = when (profile.unlockedDifficulty) {
         0 -> TextRes.get("easy_short", viewModel.currentLanguage)
@@ -89,7 +79,7 @@ fun StatsView(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Voltar",
+                        contentDescription = TextRes.get("back", viewModel.currentLanguage),
                         tint = if (isLight) Color(0xFF475569) else Color.White,
                         modifier = Modifier.size(18.dp)
                     )
@@ -115,9 +105,7 @@ fun StatsView(
                 item {
                     val metrics = listOf(
                         MetricPair(TextRes.get("total_games", viewModel.currentLanguage), "$totalGamesPlayed", Icons.Default.Casino, Color(0xFF3B82F6)), // Indigo/Blue
-                        MetricPair(TextRes.get("win_ratio", viewModel.currentLanguage), "$winRatio%", Icons.Default.CheckCircle, Color(0xFF10B981)), // Emerald
-                        MetricPair(TextRes.get("avg_moves", viewModel.currentLanguage), "$averageMoves", Icons.Default.SwapHoriz, Color(0xFFF59E0B)), // Amber
-                        MetricPair(TextRes.get("avg_time", viewModel.currentLanguage), averageTime, Icons.Default.Timer, Color(0xFF8B5CF6)) // Purple
+                        MetricPair(TextRes.get("win_ratio", viewModel.currentLanguage), "$winRatio%", Icons.Default.CheckCircle, Color(0xFF10B981)) // Emerald
                     )
 
                     Column(
@@ -127,10 +115,6 @@ fun StatsView(
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             MetricCard(item = metrics[0], isLight = isLight, modifier = Modifier.weight(1f))
                             MetricCard(item = metrics[1], isLight = isLight, modifier = Modifier.weight(1f))
-                        }
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            MetricCard(item = metrics[2], isLight = isLight, modifier = Modifier.weight(1f))
-                            MetricCard(item = metrics[3], isLight = isLight, modifier = Modifier.weight(1f))
                         }
                     }
                 }
@@ -152,7 +136,7 @@ fun StatsView(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.LockOpen,
-                                contentDescription = "Progresso Unlocked",
+                                contentDescription = null,
                                 tint = Color(0xFFFFC107), // Golden Accent
                                 modifier = Modifier.size(32.dp)
                             )
@@ -175,6 +159,141 @@ fun StatsView(
                                     color = if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.5f),
                                     fontSize = 11.sp
                                 )
+                            }
+                        }
+                    }
+                }
+
+                // Estatísticas por Nível Section
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = TextRes.get("stats_by_level", viewModel.currentLanguage),
+                        color = if (isLight) Color(0xFF475569) else Color.White.copy(alpha = 0.85f),
+                        fontWeight = FontWeight.Black,
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(start = 2.dp, bottom = 4.dp)
+                    )
+                }
+
+                items(difficultyNames) { diffName ->
+                    val diffGames = gameList.filter { it.difficulty == diffName }
+                    val diffPlayed = diffGames.size
+                    val diffWins = diffGames.count { it.won }
+                    val avgMovesForDiff = if (diffWins > 0) {
+                        diffGames.filter { it.won }.map { it.moves }.average().toInt()
+                    } else 0
+                    val avgTimeForDiff = if (diffWins > 0) {
+                        val totalSec = diffGames.filter { it.won }.map { it.timeInSeconds }.average().toInt()
+                        val m = totalSec / 60
+                        val s = totalSec % 60
+                        String.format(java.util.Locale.getDefault(), "%02d:%02d", m, s)
+                    } else "00:00"
+
+                    val (translatedDiff, diffColor) = when (diffName) {
+                        "Fácil" -> Pair(TextRes.get("easy_short", viewModel.currentLanguage), Color(0xFF10B981))
+                        "Médio" -> Pair(TextRes.get("medium_short", viewModel.currentLanguage), Color(0xFF3B82F6))
+                        "Difícil" -> Pair(TextRes.get("hard_short", viewModel.currentLanguage), Color(0xFFF59E0B))
+                        "Especialista" -> Pair(TextRes.get("expert_short", viewModel.currentLanguage), Color(0xFFF97316))
+                        "Épico" -> Pair(TextRes.get("epic_short", viewModel.currentLanguage), Color(0xFFEF4444))
+                        else -> Pair(TextRes.get("master_short", viewModel.currentLanguage), Color(0xFF8B5CF6))
+                    }
+
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color.White else Color.Black.copy(alpha = 0.45f)
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        border = BorderStroke(1.5.dp, diffColor.copy(alpha = 0.8f)),
+                        elevation = CardDefaults.cardElevation(if (isLight) 1.dp else 0.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            // Dificuldade Header
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = translatedDiff.uppercase(),
+                                    color = diffColor,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = String.format(TextRes.get("games_plural", viewModel.currentLanguage), diffPlayed),
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            
+                            Spacer(modifier = Modifier.height(10.dp))
+                            
+                            // Métricas dispostas horizontalmente
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                // Vitórias
+                                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1.2f)) {
+                                    Text(
+                                        text = TextRes.get("wins_title", viewModel.currentLanguage),
+                                        color = if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.4f),
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "$diffWins",
+                                        color = if (isLight) Color(0xFF1E293B) else Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black
+                                    )
+                                }
+                                
+                                // Divisor
+                                Box(modifier = Modifier.width(1.dp).height(24.dp).background(if (isLight) Color(0xFFF1F5F9) else Color.White.copy(alpha = 0.08f)))
+                                
+                                // Média Movimentos
+                                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1.5f)) {
+                                    Text(
+                                        text = TextRes.get("avg_moves", viewModel.currentLanguage),
+                                        color = if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.4f),
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "$avgMovesForDiff",
+                                        color = if (isLight) Color(0xFF1E293B) else Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black
+                                    )
+                                }
+                                
+                                // Divisor
+                                Box(modifier = Modifier.width(1.dp).height(24.dp).background(if (isLight) Color(0xFFF1F5F9) else Color.White.copy(alpha = 0.08f)))
+                                
+                                // Média Tempo
+                                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1.5f)) {
+                                    Text(
+                                        text = TextRes.get("avg_time", viewModel.currentLanguage),
+                                        color = if (isLight) Color(0xFF94A3B8) else Color.White.copy(alpha = 0.4f),
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = avgTimeForDiff,
+                                        color = if (isLight) Color(0xFF1E293B) else Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black
+                                    )
+                                }
                             }
                         }
                     }
@@ -244,7 +363,7 @@ fun StatsView(
                                 ) {
                                     Icon(
                                         imageVector = if (item.won) Icons.Default.CheckCircle else Icons.Default.Cancel,
-                                        contentDescription = "Status",
+                                        contentDescription = null,
                                         tint = if (item.won) Color(0xFF10B981) else Color(0xFFEF4444),
                                         modifier = Modifier.size(20.dp)
                                     )

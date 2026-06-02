@@ -104,7 +104,7 @@ fun SplashView(
                 // floating foreground magic flask
                 Image(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Enigma Bottles Potion Logo",
+                    contentDescription = TextRes.get("app_logo_description", viewModel.currentLanguage),
                     modifier = Modifier
                         .size(130.dp)
                 )
@@ -178,7 +178,7 @@ fun SplashView(
 
         // 4. Studio copyright text
         Text(
-            text = "Felipera Labs • Premium App",
+            text = TextRes.get("app_credits", viewModel.currentLanguage),
             fontSize = 11.sp,
             fontWeight = FontWeight.Light,
             color = Color.White.copy(alpha = 0.4f),

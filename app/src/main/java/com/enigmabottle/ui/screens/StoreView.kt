@@ -13,17 +13,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.OfflineBolt
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.Dialog
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -118,29 +111,29 @@ fun StoreView(
         ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 29,90"
 
     val skinItems = listOf(
-        SkinCommodity("classic", "Garrafa Clássica", "Vidro tubular clássico com tampa branca.", 0, Color(0xFFE53935)),
-        SkinCommodity("test_tube", "Tubo de Ensaio", "Tubo de vidro longo e arredondado tradicional de laboratório.", 120, Color(0xFF22C55E)),
-        SkinCommodity("flask", "Erlenmeyer de Química", "Bico estreito de laboratório para cientistas.", 80, Color(0xFF43A047)),
-        SkinCommodity("potion", "Frasco de Alquimia", "Redonda medieval para poções místicas.", 150, Color(0xFF9C27B0)),
-        SkinCommodity("potion_cork", "Frasco com Rolha", "Oval clássico fechado por rolha rústica de cortiça.", 250, Color(0xFFFF7043)),
-        SkinCommodity("neon", "Cápsula Cyber Neon", "Dispositivo futurista com núcleos ultra luminescentes.", 400, Color(0xFF00ACC1)),
-        SkinCommodity("crystals", "Gema de Cristal Arcana", "Vidro lapidado em facetas místicas e reluzentes.", 500, Color(0xFFD946EF)),
-        SkinCommodity("royal", "Ânfora Real de Ouro", "Frasco deluxe aristocrático banhado a ouro puro.", 650, Color(0xFFFFD700))
+        SkinCommodity("classic", TextRes.get("skin_classic_name", viewModel.currentLanguage), TextRes.get("skin_classic_desc", viewModel.currentLanguage), 0, Color(0xFFE53935)),
+        SkinCommodity("test_tube", TextRes.get("skin_test_tube_name", viewModel.currentLanguage), TextRes.get("skin_test_tube_desc", viewModel.currentLanguage), 120, Color(0xFF22C55E)),
+        SkinCommodity("flask", TextRes.get("skin_flask_name", viewModel.currentLanguage), TextRes.get("skin_flask_desc", viewModel.currentLanguage), 80, Color(0xFF43A047)),
+        SkinCommodity("potion", TextRes.get("skin_potion_name", viewModel.currentLanguage), TextRes.get("skin_potion_desc", viewModel.currentLanguage), 150, Color(0xFF9C27B0)),
+        SkinCommodity("potion_cork", TextRes.get("skin_potion_cork_name", viewModel.currentLanguage), TextRes.get("skin_potion_cork_desc", viewModel.currentLanguage), 250, Color(0xFFFF7043)),
+        SkinCommodity("neon", TextRes.get("skin_neon_name", viewModel.currentLanguage), TextRes.get("skin_neon_desc", viewModel.currentLanguage), 400, Color(0xFF00ACC1)),
+        SkinCommodity("crystals", TextRes.get("skin_crystals_name", viewModel.currentLanguage), TextRes.get("skin_crystals_desc", viewModel.currentLanguage), 500, Color(0xFFD946EF)),
+        SkinCommodity("royal", TextRes.get("skin_royal_name", viewModel.currentLanguage), TextRes.get("skin_royal_desc", viewModel.currentLanguage), 650, Color(0xFFFFD700))
     )
 
     val bgItems = listOf(
-        BgCommodity("sleek_interface", "Visual Minimalista", "Tema leve e elegante Sleek Interface com tons de azul e violeta.", 0),
-        BgCommodity("clear_aurora", "Aurora Boreal Clara", "Mistura suave de verde menta pastel e violeta celestial.", 60),
-        BgCommodity("clear_sunset", "Pôr do Sol Suave", "Degradê acolhedor de pêssego, coral e dourado claro.", 80),
-        BgCommodity("clear_mint", "Menta Fresca", "Tema leve de tons verdes refrescantes e azul glacial.", 120),
-        BgCommodity("clear_lavender", "Névoa de Lavanda", "Combinação pacífica de roxo lavanda e azul suave.", 150),
-        BgCommodity("clear_sakura", "Brisa de Sakura", "Rosa delicado inspirado no desabrochar das cerejeiras.", 180),
-        BgCommodity("wood", "Prateleira Rústica", "Madeira aconchegante de taverna clássica de jogos.", 40),
-        BgCommodity("lab", "Bancada Química", "Chapa de metal azulada de laboratório de experimentos.", 100),
-        BgCommodity("magic", "Santuário de Magia", "Quarto violeta profundo com partículas de poeira cósmica.", 200),
-        BgCommodity("abyss", "Abismo Profundo", "Profundezas marinhas azuis escuras com correntes de bolhas térmicas.", 300),
-        BgCommodity("neon_grid", "Grelha Cyber Neon", "Grid de laser rosa choque de fliperama dos anos 80.", 350),
-        BgCommodity("cosmic", "Nebulosa Cósmica", "Voz do infinito em tons magenta escuro repletos de estrelas brilhantes.", 500)
+        BgCommodity("sleek_interface", TextRes.get("bg_sleek_interface_name", viewModel.currentLanguage), TextRes.get("bg_sleek_interface_desc", viewModel.currentLanguage), 0),
+        BgCommodity("clear_aurora", TextRes.get("bg_clear_aurora_name", viewModel.currentLanguage), TextRes.get("bg_clear_aurora_desc", viewModel.currentLanguage), 60),
+        BgCommodity("clear_sunset", TextRes.get("bg_clear_sunset_name", viewModel.currentLanguage), TextRes.get("bg_clear_sunset_desc", viewModel.currentLanguage), 80),
+        BgCommodity("clear_mint", TextRes.get("bg_clear_mint_name", viewModel.currentLanguage), TextRes.get("bg_clear_mint_desc", viewModel.currentLanguage), 120),
+        BgCommodity("clear_lavender", TextRes.get("bg_clear_lavender_name", viewModel.currentLanguage), TextRes.get("bg_clear_lavender_desc", viewModel.currentLanguage), 150),
+        BgCommodity("clear_sakura", TextRes.get("bg_clear_sakura_name", viewModel.currentLanguage), TextRes.get("bg_clear_sakura_desc", viewModel.currentLanguage), 180),
+        BgCommodity("wood", TextRes.get("bg_wood_name", viewModel.currentLanguage), TextRes.get("bg_wood_desc", viewModel.currentLanguage), 40),
+        BgCommodity("lab", TextRes.get("bg_lab_name", viewModel.currentLanguage), TextRes.get("bg_lab_desc", viewModel.currentLanguage), 100),
+        BgCommodity("magic", TextRes.get("bg_magic_name", viewModel.currentLanguage), TextRes.get("bg_magic_desc", viewModel.currentLanguage), 200),
+        BgCommodity("abyss", TextRes.get("bg_abyss_name", viewModel.currentLanguage), TextRes.get("bg_abyss_desc", viewModel.currentLanguage), 300),
+        BgCommodity("neon_grid", TextRes.get("bg_neon_grid_name", viewModel.currentLanguage), TextRes.get("bg_neon_grid_desc", viewModel.currentLanguage), 350),
+        BgCommodity("cosmic", TextRes.get("bg_cosmic_name", viewModel.currentLanguage), TextRes.get("bg_cosmic_desc", viewModel.currentLanguage), 500)
     )
 
     val isLight = profile.activeBgId == "sleek_interface" || profile.activeBgId.startsWith("clear_")
@@ -171,7 +164,7 @@ fun StoreView(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = TextRes.get("back", viewModel.currentLanguage),
                             tint = if (isLight) Color(0xFF475569) else Color.White,
                             modifier = Modifier.size(18.dp)
                         )
@@ -198,7 +191,7 @@ fun StoreView(
                     ) {
                         Icon(
                             imageVector = Icons.Default.MonetizationOn,
-                            contentDescription = "Carteira",
+                            contentDescription = TextRes.get("wallet_label", viewModel.currentLanguage),
                             tint = Color(0xFFFFC107),
                             modifier = Modifier.size(18.dp)
                         )
@@ -393,7 +386,7 @@ fun StoreView(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.MonetizationOn,
-                                                    contentDescription = "Preco",
+                                                    contentDescription = TextRes.get("cost", viewModel.currentLanguage),
                                                     tint = Color(0xFF78350F),
                                                     modifier = Modifier.size(12.dp)
                                                 )
@@ -531,7 +524,7 @@ fun StoreView(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.MonetizationOn,
-                                                    contentDescription = "Custo",
+                                                    contentDescription = TextRes.get("cost", viewModel.currentLanguage),
                                                     tint = Color(0xFF78350F),
                                                     modifier = Modifier.size(12.dp)
                                                 )
@@ -589,7 +582,8 @@ fun StoreView(
                                 verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("🚫 ", fontSize = 14.sp)
+                                    Icon(Icons.Default.Block, null, tint = if (isLight) Color(0xFF475569) else Color.White, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
                                     Text(
                                         text = TextRes.get("premium_benefit_1", viewModel.currentLanguage),
                                         fontSize = 12.sp,
@@ -598,7 +592,8 @@ fun StoreView(
                                     )
                                 }
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("⚡ ", fontSize = 14.sp)
+                                    Icon(Icons.Default.Bolt, null, tint = Color(0xFF4F46E5), modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
                                     Text(
                                         text = TextRes.get("premium_benefit_2", viewModel.currentLanguage),
                                         fontSize = 12.sp,
@@ -607,7 +602,8 @@ fun StoreView(
                                     )
                                 }
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("🪙 ", fontSize = 14.sp)
+                                    Icon(Icons.Default.MonetizationOn, null, tint = Color(0xFFFFC107), modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
                                     Text(
                                         text = TextRes.get("premium_benefit_3", viewModel.currentLanguage),
                                         fontSize = 12.sp,
@@ -633,7 +629,7 @@ fun StoreView(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Check,
-                                            contentDescription = "Ativo",
+                                            contentDescription = TextRes.get("active", viewModel.currentLanguage),
                                             tint = Color(0xFF10B981),
                                             modifier = Modifier.size(16.dp)
                                         )
@@ -758,15 +754,26 @@ fun StoreView(
 
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    Text(
-                        text = "💎 " + (if (viewModel.currentLanguage == "pt") "RECURSOS DE ALQUIMIA" else if (viewModel.currentLanguage == "es") "RECURSOS DE ALQUIMIA" else if (viewModel.currentLanguage == "fr") "RESSOURCES D\'ALCHIMIE" else if (viewModel.currentLanguage == "de") "ALCHEMIE-RESSOURCEN" else "ALCHEMY RESOURCES"),
-                        color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
-                        fontWeight = FontWeight.Black,
-                        fontSize = 14.sp,
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 12.dp)
-                    )
+                            .padding(bottom = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = null,
+                            tint = if (isLight) Color(0xFF4F46E5) else Color(0xFF818CF8),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = TextRes.get("alchemy_resources_title", viewModel.currentLanguage),
+                            color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
+                            fontWeight = FontWeight.Black,
+                            fontSize = 14.sp
+                        )
+                    }
 
                     // Card de 10 Hints
                     Card(
@@ -1099,15 +1106,21 @@ fun StoreView(
                     Spacer(modifier = Modifier.height(24.dp))
                     
                     // Seção de moedas
-                    Text(
-                        text = "🪙 " + (if (viewModel.currentLanguage == "pt") "COMPRA DE MOEDAS" else if (viewModel.currentLanguage == "es") "COMPRA DE MONEDAS" else if (viewModel.currentLanguage == "fr") "ACHAT DE PIÈCES" else if (viewModel.currentLanguage == "de") "MÜNZEN KAUFEN" else "BUY COINS"),
-                        color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
-                        fontWeight = FontWeight.Black,
-                        fontSize = 14.sp,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp)
-                    )
+                    ) {
+                        Icon(Icons.Default.MonetizationOn, null, tint = Color(0xFFFFC107), modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = TextRes.get("buy_coins_title", viewModel.currentLanguage),
+                            color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
+                            fontWeight = FontWeight.Black,
+                            fontSize = 14.sp
+                        )
+                    }
 
                     // Card de 500 Moedas
                     Card(
@@ -1131,7 +1144,7 @@ fun StoreView(
                                     .background(Color(0xFFF59E0B).copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("🪙", fontSize = 24.sp)
+                                Icon(Icons.Default.MonetizationOn, null, tint = Color(0xFFFFC107), modifier = Modifier.size(24.dp))
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
@@ -1196,7 +1209,7 @@ fun StoreView(
                                     .background(Color(0xFFD97706).copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("🪙", fontSize = 26.sp)
+                                Icon(Icons.Default.MonetizationOn, null, tint = Color(0xFFFFC107), modifier = Modifier.size(26.dp))
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
@@ -1261,7 +1274,7 @@ fun StoreView(
                                     .background(Color(0xFFB45309).copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("💰", fontSize = 28.sp)
+                                Icon(Icons.Default.MonetizationOn, null, tint = Color(0xFFFFC107), modifier = Modifier.size(28.dp))
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
@@ -1307,15 +1320,21 @@ fun StoreView(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Seção de Ofertas Especiais
-                    Text(
-                        text = "🔥 " + (if (viewModel.currentLanguage == "pt") "OFERTAS ESPECIAIS" else if (viewModel.currentLanguage == "es") "OFERTAS ESPECIALES" else if (viewModel.currentLanguage == "fr") "OFFRES SPÉCIALES" else if (viewModel.currentLanguage == "de") "SONDERANGEBOTE" else "SPECIAL OFFERS"),
-                        color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
-                        fontWeight = FontWeight.Black,
-                        fontSize = 14.sp,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp)
-                    )
+                    ) {
+                        Icon(Icons.Default.Whatshot, null, tint = Color(0xFFEF4444), modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = TextRes.get("special_offers_title", viewModel.currentLanguage),
+                            color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
+                            fontWeight = FontWeight.Black,
+                            fontSize = 14.sp
+                        )
+                    }
 
                     // Combo Alquimista Especial Card (Super Premium com gradiente na borda)
                     Card(
@@ -1345,7 +1364,7 @@ fun StoreView(
                                         .background(Color(0xFFEC4899).copy(alpha = 0.15f)),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("🎁", fontSize = 26.sp)
+                                    Icon(Icons.Default.CardGiftcard, null, tint = Color(0xFFEC4899), modifier = Modifier.size(28.dp))
                                 }
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
@@ -1393,7 +1412,7 @@ fun StoreView(
                                     Text(" x5", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isLight) Color.Black else Color.White)
                                 }
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("🪙", fontSize = 14.sp)
+                                    Icon(Icons.Default.MonetizationOn, null, tint = Color(0xFFFFC107), modifier = Modifier.size(14.dp))
                                     Text(" +1000", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isLight) Color.Black else Color.White)
                                 }
                             }
@@ -1483,7 +1502,7 @@ fun StoreView(
                                 IconButton(onClick = { showBillingDialog = false }) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "Close",
+                                        contentDescription = TextRes.get("cancel_btn", viewModel.currentLanguage),
                                         tint = Color(0xFF64748B)
                                     )
                                 }
@@ -1504,7 +1523,7 @@ fun StoreView(
                                             BillingManager.PRODUCT_PACK_XRAY -> TextRes.get("xray_pack_title", viewModel.currentLanguage)
                                             BillingManager.PRODUCT_PACK_REVEAL -> TextRes.get("reveal_pack_title", viewModel.currentLanguage)
                                             BillingManager.PRODUCT_PACK_FREEZE -> TextRes.get("freeze_pack_title", viewModel.currentLanguage)
-                                            else -> "Enigma Bottles - Premium Vitalício"
+                                            else -> TextRes.get("premium_lifetime_vial", viewModel.currentLanguage)
                                         },
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Black,
@@ -1555,20 +1574,20 @@ fun StoreView(
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Column {
                                         Text(
-                                            text = "Google Play Balance",
+                                            text = TextRes.get("gplay_balance", viewModel.currentLanguage),
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color(0xFF1E293B)
                                         )
                                         Text(
-                                            text = "Saldo disponível: R$ 25,00",
+                                            text = TextRes.get("gplay_balance_sub", viewModel.currentLanguage),
                                             fontSize = 11.sp,
                                             color = Color(0xFF64748B)
                                         )
                                     }
                                 }
                                 Text(
-                                    text = "Ativo",
+                                    text = TextRes.get("equipped", viewModel.currentLanguage),
                                     color = Color(0xFF01875F),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold
@@ -1586,7 +1605,7 @@ fun StoreView(
                                 contentPadding = PaddingValues(vertical = 12.dp)
                             ) {
                                 Text(
-                                    text = "COMPRAR EM 1 CLIQUE",
+                                    text = TextRes.get("buy_1_click", viewModel.currentLanguage),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Black,
                                     color = Color.White
@@ -1595,7 +1614,7 @@ fun StoreView(
                             
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "Pagamento processado de forma segura pelo Google Play Billing",
+                                text = TextRes.get("billing_secure_note", viewModel.currentLanguage),
                                 fontSize = 10.sp,
                                 color = Color(0xFF94A3B8),
                                 textAlign = TextAlign.Center
@@ -1608,13 +1627,13 @@ fun StoreView(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Processando pagamento...",
+                                text = TextRes.get("processing_payment", viewModel.currentLanguage),
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF334155),
                                 fontSize = 14.sp
                             )
                             Text(
-                                text = "Por favor, não feche o aplicativo.",
+                                text = TextRes.get("do_not_close_app", viewModel.currentLanguage),
                                 fontSize = 12.sp,
                                 color = Color(0xFF64748B)
                             )
@@ -1623,19 +1642,19 @@ fun StoreView(
                             Spacer(modifier = Modifier.height(24.dp))
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Sucesso",
+                                contentDescription = TextRes.get("success", viewModel.currentLanguage),
                                 tint = Color(0xFF10B981),
                                 modifier = Modifier.size(56.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Pagamento Concluído!",
+                                text = TextRes.get("payment_completed", viewModel.currentLanguage),
                                 fontWeight = FontWeight.Black,
                                 color = Color(0xFF0F172A),
                                 fontSize = 18.sp
                             )
                             Text(
-                                text = "Seu Plano Premium Vitalício foi ativado com sucesso!",
+                                text = TextRes.get("premium_activated_success_desc", viewModel.currentLanguage),
                                 fontSize = 12.sp,
                                 color = Color(0xFF475569),
                                 textAlign = TextAlign.Center,
