@@ -1,4 +1,4 @@
-﻿package com.enigmabottle.ui.components
+package com.enigmabottle.ui.components
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
@@ -20,6 +20,7 @@ fun BottleGlassware(
     isSelected: Boolean,
     isHintFlag: Boolean,
     isLight: Boolean = false,
+    hintTargetColor: Color? = null,
     modifier: Modifier = Modifier
 ) {
     // Detect whether we are in a light theme to dynamically contrast glassware frames
@@ -574,6 +575,42 @@ fun BottleGlassware(
                     cornerRadius = CornerRadius(4f, 4f)
                 )
             }
+        }
+
+        // Draw hint target color bubble if active and provided
+        if (isHintFlag && hintTargetColor != null) {
+            val bubbleCenter = Offset(centerX, height * 0.07f)
+            val bubbleRadius = width * 0.12f
+            
+            // Halo de brilho da bolha
+            drawCircle(
+                color = hintTargetColor.copy(alpha = 0.3f * pulseScale),
+                radius = bubbleRadius * 1.4f,
+                center = bubbleCenter
+            )
+            // Bolha colorida
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(Color.White, hintTargetColor, hintTargetColor.copy(alpha = 0.8f)),
+                    center = Offset(bubbleCenter.x - bubbleRadius * 0.2f, bubbleCenter.y - bubbleRadius * 0.2f),
+                    radius = bubbleRadius
+                ),
+                radius = bubbleRadius,
+                center = bubbleCenter
+            )
+            // Borda branca brilhante
+            drawCircle(
+                color = Color.White.copy(alpha = 0.9f),
+                radius = bubbleRadius,
+                center = bubbleCenter,
+                style = Stroke(width = 2.dp.toPx())
+            )
+            // Brilho místico
+            drawCircle(
+                color = Color.White.copy(alpha = 0.6f),
+                radius = bubbleRadius * 0.3f,
+                center = Offset(bubbleCenter.x - bubbleRadius * 0.3f, bubbleCenter.y - bubbleRadius * 0.3f)
+            )
         }
     }
 }

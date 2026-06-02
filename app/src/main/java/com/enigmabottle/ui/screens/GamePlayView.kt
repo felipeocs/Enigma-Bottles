@@ -44,6 +44,9 @@ fun GamePlayView(
     val swapHistory by viewModel.swapHistoryList
     val haptic = LocalHapticFeedback.current
 
+    var showConfirmPowerUpDialog by remember { mutableStateOf(false) }
+    var pendingPowerUpToConfirm by remember { mutableStateOf<String?>(null) } // "hint", "reveal", "xray", "freeze"
+
     // Calculate match info
     val activeBottlesCount = viewModel.boardSequence.size
     val currentMatches = viewModel.boardSequence.zip(viewModel.targetSequence).count { it.first == it.second }
@@ -56,27 +59,31 @@ fun GamePlayView(
     val isLight = profile.activeBgId == "sleek_interface" || profile.activeBgId.startsWith("clear_")
 
     GameThemeBackground(bgId = profile.activeBgId) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(top = 40.dp)
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(top = 40.dp)
+            ) {
             // Screen Top Header (Quit button, Score statistics, moves index)
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
+                // Lado Esquerdo: Botão Voltar (Sair/Desistir)
                 IconButton(
-                    onClick = { viewModel.quitDialogVisible = true },
+                    onClick = { 
+                        viewModel.pauseGame()
+                        viewModel.quitDialogVisible = true 
+                    },
                     modifier = Modifier
                         .size(44.dp)
                         .background(
                             if (isLight) Color(0xFFF1F5F9) else Color.Black.copy(alpha = 0.5f),
                             CircleShape
                         )
+                        .align(Alignment.CenterStart)
                         .testTag("exit_game_button")
                 ) {
                     Icon(
@@ -86,7 +93,11 @@ fun GamePlayView(
                     )
                 }
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                // Centro: Título do nível e Timer centralizado abaixo
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         text = if (viewModel.isDailyChallenge) {
                             TextRes.get("daily_challenge", viewModel.currentLanguage)
@@ -116,19 +127,13 @@ fun GamePlayView(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                }
 
-                // Moves and Timer status widget
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (isLight) Color(0xFFFFFDF5) else Color.Black.copy(alpha = 0.5f)
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, if (isLight) Color(0xFFFEF3C7) else Color.Transparent)
-                ) {
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Timer centralizado abaixo do título
                     Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Timer,
@@ -142,6 +147,28 @@ fun GamePlayView(
                             color = if (viewModel.isFreezeActive) Color(0xFF3B82F6) else (if (isLight) Color(0xFFB45309) else Color.White),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
+                        )
+                    }
+                }
+
+                // Lado Direito: Botão Pause
+                if (!viewModel.isGameOver) {
+                    IconButton(
+                        onClick = { viewModel.pauseGame() },
+                        modifier = Modifier
+                            .size(44.dp)
+                            .background(
+                                if (isLight) Color(0xFFF1F5F9) else Color.Black.copy(alpha = 0.5f),
+                                CircleShape
+                            )
+                            .align(Alignment.CenterEnd)
+                            .testTag("pause_game_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Pause,
+                            contentDescription = "Pausar",
+                            tint = if (isLight) Color(0xFF475569) else Color.White,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
@@ -241,6 +268,41 @@ fun GamePlayView(
 
                 // Bottles Shelves item
                 item {
+                    if (viewModel.isRevealActive) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 8.dp)
+                                .animateContentSize(),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFF59E0B).copy(alpha = 0.15f)),
+                            border = BorderStroke(1.5.dp, Color(0xFFF59E0B)),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = String.format(TextRes.get("reveal_active_banner", viewModel.currentLanguage), viewModel.revealTimeRemaining),
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 13.sp,
+                                    color = Color(0xFFD97706)
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                LinearProgressIndicator(
+                                    progress = { viewModel.revealTimeRemaining.toFloat() / 4f },
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.9f)
+                                        .height(6.dp)
+                                        .clip(CircleShape),
+                                    color = Color(0xFFF59E0B),
+                                    trackColor = Color(0xFFF59E0B).copy(alpha = 0.2f)
+                                )
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     // Determine adaptive column bounds matching difficulty dimensions
@@ -304,13 +366,16 @@ fun GamePlayView(
                                                     viewModel.selectBottle(index)
                                                 }
                                         ) {
-                                            BottleGlassware(
-                                                liquidColor = color,
-                                                skinId = profile.activeSkinId,
-                                                isSelected = isSelected,
-                                                isHintFlag = isHint,
-                                                isLight = isLight
-                                            )
+                                             val targetColorName = viewModel.targetSequence.getOrNull(index)
+                                             val targetColor = if (targetColorName != null) viewModel.getColorHex(targetColorName) else null
+                                             BottleGlassware(
+                                                 liquidColor = color,
+                                                 skinId = profile.activeSkinId,
+                                                 isSelected = isSelected,
+                                                 isHintFlag = isHint,
+                                                 isLight = isLight,
+                                                 hintTargetColor = targetColor
+                                             )
                                         }
                                     }
                                 }
@@ -362,7 +427,7 @@ fun GamePlayView(
 
                     if (viewModel.isXRayActive) {
                         Text(
-                            text = "⚡ Raio-X Ativo! Toque em uma garrafa para analisar.",
+                            text = "⚡ Raio-X Ativo! Toque em uma garrafa para validar.",
                             color = Color(0xFF4F46E5),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
@@ -398,7 +463,12 @@ fun GamePlayView(
                             color = Color(0xFF10B981),
                             isLight = isLight,
                             modifier = Modifier.weight(1f),
-                            onClick = { viewModel.buyHintPowerUp() }
+                            ownedCount = profile.hintCount,
+                            language = viewModel.currentLanguage,
+                            onClick = {
+                                pendingPowerUpToConfirm = "hint"
+                                showConfirmPowerUpDialog = true
+                            }
                         )
 
                         PowerUpItemButton(
@@ -408,7 +478,12 @@ fun GamePlayView(
                             color = Color(0xFFF59E0B),
                             isLight = isLight,
                             modifier = Modifier.weight(1f),
-                            onClick = { viewModel.buyRevealPowerUp() }
+                            ownedCount = profile.revealCount,
+                            language = viewModel.currentLanguage,
+                            onClick = {
+                                pendingPowerUpToConfirm = "reveal"
+                                showConfirmPowerUpDialog = true
+                            }
                         )
 
                         PowerUpItemButton(
@@ -418,7 +493,12 @@ fun GamePlayView(
                             color = Color(0xFF4F46E5),
                             isLight = isLight,
                             modifier = Modifier.weight(1f),
-                            onClick = { viewModel.buyXRayPowerUp() }
+                            ownedCount = profile.xRayCount,
+                            language = viewModel.currentLanguage,
+                            onClick = {
+                                pendingPowerUpToConfirm = "xray"
+                                showConfirmPowerUpDialog = true
+                            }
                         )
 
                         PowerUpItemButton(
@@ -428,7 +508,12 @@ fun GamePlayView(
                             color = Color(0xFF3B82F6),
                             isLight = isLight,
                             modifier = Modifier.weight(1f),
-                            onClick = { viewModel.buyFreezePowerUp() }
+                            ownedCount = profile.freezeCount,
+                            language = viewModel.currentLanguage,
+                            onClick = {
+                                pendingPowerUpToConfirm = "freeze"
+                                showConfirmPowerUpDialog = true
+                            }
                         )
                     }
                 }
@@ -538,6 +623,76 @@ fun GamePlayView(
             }
         }
 
+        // --- POWER-UP USE CONFIRMATION DIALOG ---
+        if (showConfirmPowerUpDialog && pendingPowerUpToConfirm != null) {
+            val powerUp = pendingPowerUpToConfirm!!
+            val title = TextRes.get("confirm_powerup_title", viewModel.currentLanguage)
+            val confirmText = TextRes.get("confirm_btn", viewModel.currentLanguage)
+            val cancelText = TextRes.get("cancel_btn", viewModel.currentLanguage)
+            
+            val (descriptionKey, ownedCount, coinCost) = when (powerUp) {
+                "hint" -> Triple("confirm_use_hint", profile.hintCount, 30)
+                "reveal" -> Triple("confirm_use_reveal", profile.revealCount, 50)
+                "xray" -> Triple("confirm_use_xray", profile.xRayCount, 20)
+                else -> Triple("confirm_use_freeze", profile.freezeCount, 15)
+            }
+            
+            val description = TextRes.get(descriptionKey, viewModel.currentLanguage)
+            
+            AlertDialog(
+                onDismissRequest = { showConfirmPowerUpDialog = false },
+                title = { Text(text = title, fontWeight = FontWeight.Bold, color = if (isLight) Color(0xFF1E293B) else Color.White) },
+                text = {
+                    Column {
+                        Text(text = description, color = if (isLight) Color(0xFF475569) else Color.White.copy(alpha = 0.8f))
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = TextRes.get("cost", viewModel.currentLanguage) + ": ",
+                                fontWeight = FontWeight.Bold,
+                                color = if (isLight) Color(0xFF475569) else Color.White
+                            )
+                            if (ownedCount > 0) {
+                                Text(
+                                    text = String.format(TextRes.get("from_inventory", viewModel.currentLanguage), ownedCount),
+                                    color = Color(0xFF10B981),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            } else {
+                                Text(
+                                    text = String.format(TextRes.get("buy_with_coins", viewModel.currentLanguage), coinCost),
+                                    color = Color(0xFFF59E0B),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showConfirmPowerUpDialog = false
+                            when (powerUp) {
+                                "hint" -> viewModel.buyHintPowerUp()
+                                "reveal" -> viewModel.buyRevealPowerUp()
+                                "xray" -> viewModel.buyXRayPowerUp()
+                                "freeze" -> viewModel.buyFreezePowerUp()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981))
+                    ) {
+                        Text(text = confirmText, color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showConfirmPowerUpDialog = false }) {
+                        Text(text = cancelText, color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f))
+                    }
+                },
+                containerColor = if (isLight) Color.White else Color(0xFF1E1E24)
+            )
+        }
+
         // --- WINNER CELEBRATION GAME DIALOG ---
         if (viewModel.isGameOver && viewModel.isGameWon) {
             AlertDialog(
@@ -634,7 +789,7 @@ fun GamePlayView(
                             fontSize = 16.sp
                         )
                         Text(
-                            text = TextRes.get("coins", viewModel.currentLanguage) + ": +${viewModel.lastCoinsEarned}",
+                            text = "🪙 +${viewModel.lastCoinsEarned}",
                             fontWeight = FontWeight.ExtraBold,
                             color = Color(0xFFD97706),
                             fontSize = 16.sp
@@ -734,7 +889,10 @@ fun GamePlayView(
                         }
 
                         TextButton(
-                            onClick = { viewModel.quitDialogVisible = false }
+                            onClick = { 
+                                viewModel.quitDialogVisible = false 
+                                viewModel.resumeGame()
+                            }
                         ) {
                             Text(
                                 text = TextRes.get("continue_playing_btn", viewModel.currentLanguage),
@@ -748,7 +906,97 @@ fun GamePlayView(
                 shape = RoundedCornerShape(20.dp)
             )
         }
+
+        if (viewModel.isGamePaused) {
+            // Overlay de Pause
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF0F172A),
+                                Color(0xFF1E1B4B),
+                                Color(0xFF311042)
+                            )
+                        )
+                    )
+                    .clickable(enabled = true, onClick = {}),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(24.dp)
+                ) {
+                    Text(
+                        text = "🧪 ENIGMA BOTTLES",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFFFFD700),
+                        letterSpacing = 4.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = TextRes.get("game_paused_title", viewModel.currentLanguage),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                    
+                    Button(
+                        onClick = { viewModel.resumeGame() },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(50.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = TextRes.get("resume_game_btn", viewModel.currentLanguage),
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = { viewModel.quitDialogVisible = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444)),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(50.dp)
+                    ) {
+                        Text(
+                            text = TextRes.get("exit", viewModel.currentLanguage),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                    }
+                }
+            }
+        }
     }
+}
 }
 
 @Composable
@@ -759,6 +1007,8 @@ fun PowerUpItemButton(
     color: Color,
     isLight: Boolean,
     modifier: Modifier = Modifier,
+    ownedCount: Int = 0,
+    language: String = "pt",
     onClick: () -> Unit
 ) {
     Card(
@@ -797,23 +1047,37 @@ fun PowerUpItemButton(
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(2.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.MonetizationOn,
-                    contentDescription = "Cost",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(10.dp)
-                )
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(
-                    text = "${cost}c",
-                    color = Color(0xFFD97706),
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold
-                )
+            if (ownedCount > 0) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = String.format(TextRes.get("powerup_owned", language), ownedCount),
+                        color = Color(0xFF10B981),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MonetizationOn,
+                        contentDescription = "Cost",
+                        tint = Color(0xFFFFC107),
+                        modifier = Modifier.size(10.dp)
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = "$cost",
+                        color = Color(0xFFD97706),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

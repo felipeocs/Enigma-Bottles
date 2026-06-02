@@ -1,4 +1,4 @@
-﻿package com.enigmabottle.data
+package com.enigmabottle.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -25,11 +25,16 @@ data class UserProfile(
     val lastLoginDateKey: String = "",
     val hintCount: Int = 0,
     val xRayCount: Int = 0,
+    val revealCount: Int = 0,
+    val freezeCount: Int = 0,
+    val weekStartDateKey: String = "",
+    val claimedDaysCsv: String = "",
     val isVibrationEnabled: Boolean = true,
     val isAdFree: Boolean = false,
     val completedLevelsCount: Int = 0,
     val infiniteLivesEndTime: Long = 0L,
-    val lastInfiniteLivesActivationDate: String = ""
+    val lastInfiniteLivesActivationDate: String = "",
+    val languageCode: String = "pt"
 ) {
     fun getPurchasedSkins(): List<String> = purchasedSkinsCsv.split(",").filter { it.isNotBlank() }
     fun getPurchasedBgs(): List<String> = purchasedBgsCsv.split(",").filter { it.isNotBlank() }

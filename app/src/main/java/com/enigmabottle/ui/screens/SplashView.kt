@@ -1,4 +1,4 @@
-﻿package com.enigmabottle.ui.screens
+package com.enigmabottle.ui.screens
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
@@ -101,15 +101,6 @@ fun SplashView(
                         )
                 )
 
-                // inner portal background
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_background),
-                    contentDescription = "Background Glow",
-                    modifier = Modifier
-                        .size(130.dp)
-                        .clip(CircleShape)
-                )
-
                 // floating foreground magic flask
                 Image(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
@@ -187,7 +178,7 @@ fun SplashView(
 
         // 4. Studio copyright text
         Text(
-            text = "Enigma Studio Games • Premium App",
+            text = "Felipera Labs • Premium App",
             fontSize = 11.sp,
             fontWeight = FontWeight.Light,
             color = Color.White.copy(alpha = 0.4f),

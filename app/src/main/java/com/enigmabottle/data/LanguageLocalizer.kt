@@ -18,6 +18,7 @@ enum class Language(val displayName: String, val code: String) {
 
 object TextRes {
     private var appContext: Context? = null
+    private var currentConfiguredLang: String? = null
 
     fun init(context: Context) {
         appContext = context.applicationContext
@@ -26,21 +27,24 @@ object TextRes {
     fun get(key: String, lang: String): String {
         val ctx = appContext ?: return key
         try {
-            val config = Configuration(ctx.resources.configuration)
-            config.setLocale(Locale.forLanguageTag(lang))
-            val localeContext = ctx.createConfigurationContext(config)
-            val resourceId = localeContext.resources.getIdentifier(key, "string", localeContext.packageName)
-            if (resourceId != 0) {
-                return localeContext.resources.getString(resourceId)
+            if (currentConfiguredLang != lang) {
+                val locale = Locale(lang)
+                Locale.setDefault(locale)
+                val resources = ctx.resources
+                val config = resources.configuration
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    config.setLocales(android.os.LocaleList(locale))
+                } else {
+                    @Suppress("DEPRECATION")
+                    config.locale = locale
+                }
+                @Suppress("DEPRECATION")
+                resources.updateConfiguration(config, resources.displayMetrics)
+                currentConfiguredLang = lang
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        // Fallback to default resources
-        try {
-            val defaultResId = ctx.resources.getIdentifier(key, "string", ctx.packageName)
-            if (defaultResId != 0) {
-                return ctx.resources.getString(defaultResId)
+            val resourceId = ctx.resources.getIdentifier(key, "string", ctx.packageName)
+            if (resourceId != 0) {
+                return ctx.resources.getString(resourceId)
             }
         } catch (e: Exception) {
             e.printStackTrace()

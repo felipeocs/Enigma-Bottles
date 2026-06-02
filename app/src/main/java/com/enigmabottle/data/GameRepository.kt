@@ -1,4 +1,4 @@
-﻿package com.enigmabottle.data
+package com.enigmabottle.data
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -21,41 +21,43 @@ class GameRepository(private val dao: DatabaseDao) {
         profile
     }
 
-    suspend fun updateProfile(profile: UserProfile) = withContext(Dispatchers.IO) {
-        dao.updateUserProfile(profile)
+    suspend fun updateProfile(transform: (UserProfile) -> UserProfile) = withContext(Dispatchers.IO) {
+        val p = getOrInitializeProfile()
+        val newProfile = transform(p)
+        dao.updateUserProfile(newProfile)
     }
 
-    suspend fun addCoins(amount: Int) = withContext(Dispatchers.IO) {
-        val p = getOrInitializeProfile()
-        dao.updateUserProfile(p.copy(coins = p.coins + amount))
+    suspend fun addCoins(amount: Int) = updateProfile { p ->
+        p.copy(coins = p.coins + amount)
     }
 
     suspend fun spendCoins(amount: Int): Boolean = withContext(Dispatchers.IO) {
-        val p = getOrInitializeProfile()
-        if (p.coins >= amount) {
-            dao.updateUserProfile(p.copy(coins = p.coins - amount))
-            true
-        } else {
-            false
+        var success = false
+        updateProfile { p ->
+            if (p.coins >= amount) {
+                success = true
+                p.copy(coins = p.coins - amount)
+            } else {
+                p
+            }
         }
+        success
     }
 
-    suspend fun changeLives(delta: Int) = withContext(Dispatchers.IO) {
-        val p = getOrInitializeProfile()
+    suspend fun changeLives(delta: Int) = updateProfile { p ->
         val newLives = (p.lives + delta).coerceAtLeast(0)
-        dao.updateUserProfile(p.copy(
+        p.copy(
             lives = newLives,
             lastLifeRegenTimeMillis = if (newLives < 5 && p.lives >= 5) System.currentTimeMillis() else p.lastLifeRegenTimeMillis
-        ))
+        )
     }
 
-    suspend fun restoreLives() = withContext(Dispatchers.IO) {
-        val p = getOrInitializeProfile()
+    suspend fun restoreLives() = updateProfile { p ->
         val newLives = p.lives + 1
-        dao.updateUserProfile(p.copy(
+        p.copy(
             lives = newLives,
             lastLifeRegenTimeMillis = if (newLives < 5) p.lastLifeRegenTimeMillis else System.currentTimeMillis()
-        ))
+        )
     }
 
     suspend fun saveGameRecord(record: GameRecord) = withContext(Dispatchers.IO) {

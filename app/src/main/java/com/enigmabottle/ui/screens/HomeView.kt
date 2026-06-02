@@ -1,4 +1,4 @@
-﻿package com.enigmabottle.ui.screens
+package com.enigmabottle.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
@@ -190,15 +190,6 @@ fun HomeView(
                                     )
                                 )
                         )
-                        // Background circle of the launcher
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_launcher_background),
-                            contentDescription = "Background Glow",
-                            modifier = Modifier
-                                .size(88.dp)
-                                .clip(CircleShape)
-                                .border(2.5.dp, Color(0xFFFFD700), CircleShape)
-                        )
                         // Foreground bottle logo
                         Image(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
@@ -251,63 +242,7 @@ fun HomeView(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Indicação visual de bônus acumulados das recompensas diárias
-                if (profile.hintCount > 0 || profile.xRayCount > 0) {
-                    Row(
-                        modifier = Modifier
-                            .padding(bottom = 20.dp)
-                            .background(
-                                if (isLight) Color(0xFFF1F5F9) else Color.White.copy(alpha = 0.08f),
-                                RoundedCornerShape(12.dp)
-                            )
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = TextRes.get("free_items_label", viewModel.currentLanguage),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isLight) Color(0xFF475569) else Color.White.copy(alpha = 0.6f)
-                        )
-                        if (profile.hintCount > 0) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.Lightbulb,
-                                    contentDescription = "Dicas",
-                                    tint = Color(0xFFFFC107),
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(2.dp))
-                                Text(
-                                    text = "${profile.hintCount} " + TextRes.get("hints_plural", viewModel.currentLanguage),
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = if (isLight) Color(0xFF1E293B) else Color.White
-                                )
-                            }
-                        }
-                        if (profile.xRayCount > 0) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.Bolt,
-                                    contentDescription = "Raio-X",
-                                    tint = Color(0xFF00ACC1),
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(2.dp))
-                                Text(
-                                    text = "${profile.xRayCount} " + TextRes.get("xrays_plural", viewModel.currentLanguage),
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = if (isLight) Color(0xFF1E293B) else Color.White
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
+                Spacer(modifier = Modifier.height(12.dp))
             }
 
             // Resume button if valid saved session exists
@@ -697,7 +632,7 @@ fun HomeView(
                                 modifier = Modifier.weight(1f),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("+75 Moedas", color = Color(0xFF78350F), fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Text("+75", color = Color(0xFF78350F), fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
                             Button(
                                 onClick = { viewModel.launchAdRewardFlow("lives") },

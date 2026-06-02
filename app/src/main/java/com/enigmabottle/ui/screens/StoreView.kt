@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -15,6 +18,8 @@ import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.OfflineBolt
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.Dialog
@@ -51,6 +56,7 @@ fun StoreView(
     // Google Play Billing simulated states
     var showBillingDialog by remember { mutableStateOf(false) }
     var billingStep by remember { mutableStateOf(0) } // 0 = Confirm Pay, 1 = Processing, 2 = Success
+    var simulatedProductId by remember { mutableStateOf("") }
 
     if (showBillingDialog && billingStep == 1) {
         LaunchedEffect(Unit) {
@@ -59,13 +65,57 @@ fun StoreView(
         }
     }
     if (showBillingDialog && billingStep == 2) {
-        LaunchedEffect(Unit) {
+        LaunchedEffect(simulatedProductId) {
             kotlinx.coroutines.delay(1500)
-            viewModel.buyAdFreePlan()
+            when (simulatedProductId) {
+                BillingManager.PRODUCT_PACK_HINTS -> viewModel.addHints(10)
+                BillingManager.PRODUCT_PACK_XRAY -> viewModel.addXRay(10)
+                BillingManager.PRODUCT_PACK_REVEAL -> viewModel.addReveal(10)
+                BillingManager.PRODUCT_PACK_FREEZE -> viewModel.addFreeze(10)
+                BillingManager.PRODUCT_COINS_500 -> viewModel.addCoins(500)
+                BillingManager.PRODUCT_COINS_1000 -> viewModel.addCoins(1000)
+                BillingManager.PRODUCT_COINS_5000 -> viewModel.addCoins(5000)
+                BillingManager.PRODUCT_COMBO_PACK -> viewModel.addComboPack()
+                else -> viewModel.buyAdFreePlan()
+            }
             showBillingDialog = false
             billingStep = 0
         }
     }
+
+    val billingManager = viewModel.billingManager
+    val productsDetailsMap by if (billingManager != null) {
+        billingManager.productsDetailsMapState.collectAsState()
+    } else {
+        remember { mutableStateOf(emptyMap<String, com.android.billingclient.api.ProductDetails>()) }
+    }
+
+    val premiumPrice = productsDetailsMap[BillingManager.PRODUCT_LIFETIME_PREMIUM]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 9,90"
+    
+    val hintsPackPrice = productsDetailsMap[BillingManager.PRODUCT_PACK_HINTS]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 4,90"
+        
+    val xrayPackPrice = productsDetailsMap[BillingManager.PRODUCT_PACK_XRAY]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 3,90"
+
+    val revealPackPrice = productsDetailsMap[BillingManager.PRODUCT_PACK_REVEAL]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 5,90"
+
+    val freezePackPrice = productsDetailsMap[BillingManager.PRODUCT_PACK_FREEZE]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 2,90"
+
+    val coins500Price = productsDetailsMap[BillingManager.PRODUCT_COINS_500]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 6,90"
+    
+    val coins1000Price = productsDetailsMap[BillingManager.PRODUCT_COINS_1000]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 11,90"
+
+    val coins5000Price = productsDetailsMap[BillingManager.PRODUCT_COINS_5000]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 49,90"
+
+    val comboPackPrice = productsDetailsMap[BillingManager.PRODUCT_COMBO_PACK]
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 29,90"
 
     val skinItems = listOf(
         SkinCommodity("classic", "Garrafa Clássica", "Vidro tubular clássico com tampa branca.", 0, Color(0xFFE53935)),
@@ -501,6 +551,7 @@ fun StoreView(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
                         .padding(bottom = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -528,7 +579,7 @@ fun StoreView(
                                 text = TextRes.get("premium_lifetime_title", viewModel.currentLanguage),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
-                                color = if (isLight) Color(0xFF1E3A8A) else Color(0xFFFFD700)
+                                color = if (isLight) Color(0xFF1E3A8A) else Color.White
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             
@@ -673,12 +724,14 @@ fun StoreView(
                                     onClick = { 
                                         val activity = context as? Activity
                                         if (activity != null) {
-                                            val success = viewModel.billingManager?.launchBillingFlow(activity)
+                                            val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_LIFETIME_PREMIUM)
                                             if (success != true) {
+                                                simulatedProductId = BillingManager.PRODUCT_LIFETIME_PREMIUM
                                                 billingStep = 0
                                                 showBillingDialog = true
                                             }
                                         } else {
+                                            simulatedProductId = BillingManager.PRODUCT_LIFETIME_PREMIUM
                                             billingStep = 0
                                             showBillingDialog = true
                                         }
@@ -692,13 +745,687 @@ fun StoreView(
                                         horizontalArrangement = Arrangement.Center
                                     ) {
                                         Text(
-                                            text = TextRes.get("premium_buy_btn", viewModel.currentLanguage),
+                                            text = String.format(TextRes.get("premium_buy_btn", viewModel.currentLanguage), premiumPrice),
                                             color = Color.White,
                                             fontWeight = FontWeight.Black,
                                             fontSize = 13.sp
                                         )
                                     }
                                 }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text(
+                        text = "💎 " + (if (viewModel.currentLanguage == "pt") "RECURSOS DE ALQUIMIA" else if (viewModel.currentLanguage == "es") "RECURSOS DE ALQUIMIA" else if (viewModel.currentLanguage == "fr") "RESSOURCES D\'ALCHIMIE" else if (viewModel.currentLanguage == "de") "ALCHEMIE-RESSOURCEN" else "ALCHEMY RESOURCES"),
+                        color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
+                        fontWeight = FontWeight.Black,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                    )
+
+                    // Card de 10 Hints
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color.White else Color.Black.copy(alpha = 0.45f)
+                        ),
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(
+                            1.dp,
+                            if (isLight) Color(0xFFE2E8F0) else Color.White.copy(alpha = 0.10f)
+                        ),
+                        elevation = CardDefaults.cardElevation(if (isLight) 1.dp else 0.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(Color.Unspecified.run { androidx.compose.foundation.shape.CircleShape })
+                                    .background(Color(0xFF10B981).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Lightbulb,
+                                    contentDescription = null,
+                                    tint = Color(0xFF10B981),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = TextRes.get("hints_pack_title", viewModel.currentLanguage),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isLight) Color(0xFF1E293B) else Color.White
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = TextRes.get("hints_pack_desc", viewModel.currentLanguage),
+                                    fontSize = 11.sp,
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f),
+                                    lineHeight = 14.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_PACK_HINTS)
+                                        if (success != true) {
+                                            simulatedProductId = BillingManager.PRODUCT_PACK_HINTS
+                                            billingStep = 0
+                                            showBillingDialog = true
+                                        }
+                                    } else {
+                                        simulatedProductId = BillingManager.PRODUCT_PACK_HINTS
+                                        billingStep = 0
+                                        showBillingDialog = true
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = hintsPackPrice,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
+
+                    // Card de 10 X-Rays
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color.White else Color.Black.copy(alpha = 0.45f)
+                        ),
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(
+                            1.dp,
+                            if (isLight) Color(0xFFE2E8F0) else Color.White.copy(alpha = 0.10f)
+                        ),
+                        elevation = CardDefaults.cardElevation(if (isLight) 1.dp else 0.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(Color.Unspecified.run { androidx.compose.foundation.shape.CircleShape })
+                                    .background(Color(0xFF4F46E5).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.OfflineBolt,
+                                    contentDescription = null,
+                                    tint = Color(0xFF4F46E5),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = TextRes.get("xray_pack_title", viewModel.currentLanguage),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isLight) Color(0xFF1E293B) else Color.White
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = TextRes.get("xray_pack_desc", viewModel.currentLanguage),
+                                    fontSize = 11.sp,
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f),
+                                    lineHeight = 14.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_PACK_XRAY)
+                                        if (success != true) {
+                                            simulatedProductId = BillingManager.PRODUCT_PACK_XRAY
+                                            billingStep = 0
+                                            showBillingDialog = true
+                                        }
+                                    } else {
+                                        simulatedProductId = BillingManager.PRODUCT_PACK_XRAY
+                                        billingStep = 0
+                                        showBillingDialog = true
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4F46E5)),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = xrayPackPrice,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
+
+                    // Card de 10 Reveladores
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color.White else Color.Black.copy(alpha = 0.45f)
+                        ),
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(
+                            1.dp,
+                            if (isLight) Color(0xFFE2E8F0) else Color.White.copy(alpha = 0.10f)
+                        ),
+                        elevation = CardDefaults.cardElevation(if (isLight) 1.dp else 0.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFF59E0B).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Visibility,
+                                    contentDescription = null,
+                                    tint = Color(0xFFF59E0B),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = TextRes.get("reveal_pack_title", viewModel.currentLanguage),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isLight) Color(0xFF1E293B) else Color.White
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = TextRes.get("reveal_pack_desc", viewModel.currentLanguage),
+                                    fontSize = 11.sp,
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f),
+                                    lineHeight = 14.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_PACK_REVEAL)
+                                        if (success != true) {
+                                            simulatedProductId = BillingManager.PRODUCT_PACK_REVEAL
+                                            billingStep = 0
+                                            showBillingDialog = true
+                                        }
+                                    } else {
+                                        simulatedProductId = BillingManager.PRODUCT_PACK_REVEAL
+                                        billingStep = 0
+                                        showBillingDialog = true
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF59E0B)),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = revealPackPrice,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
+
+                    // Card de 10 Congeladores
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color.White else Color.Black.copy(alpha = 0.45f)
+                        ),
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(
+                            1.dp,
+                            if (isLight) Color(0xFFE2E8F0) else Color.White.copy(alpha = 0.10f)
+                        ),
+                        elevation = CardDefaults.cardElevation(if (isLight) 1.dp else 0.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF3B82F6).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AcUnit,
+                                    contentDescription = null,
+                                    tint = Color(0xFF3B82F6),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = TextRes.get("freeze_pack_title", viewModel.currentLanguage),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isLight) Color(0xFF1E293B) else Color.White
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = TextRes.get("freeze_pack_desc", viewModel.currentLanguage),
+                                    fontSize = 11.sp,
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f),
+                                    lineHeight = 14.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_PACK_FREEZE)
+                                        if (success != true) {
+                                            simulatedProductId = BillingManager.PRODUCT_PACK_FREEZE
+                                            billingStep = 0
+                                            showBillingDialog = true
+                                        }
+                                    } else {
+                                        simulatedProductId = BillingManager.PRODUCT_PACK_FREEZE
+                                        billingStep = 0
+                                        showBillingDialog = true
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6)),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = freezePackPrice,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // Seção de moedas
+                    Text(
+                        text = "🪙 " + (if (viewModel.currentLanguage == "pt") "COMPRA DE MOEDAS" else if (viewModel.currentLanguage == "es") "COMPRA DE MONEDAS" else if (viewModel.currentLanguage == "fr") "ACHAT DE PIÈCES" else if (viewModel.currentLanguage == "de") "MÜNZEN KAUFEN" else "BUY COINS"),
+                        color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
+                        fontWeight = FontWeight.Black,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                    )
+
+                    // Card de 500 Moedas
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color.White else Color.Black.copy(alpha = 0.45f)
+                        ),
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(1.dp, if (isLight) Color(0xFFE2E8F0) else Color.White.copy(alpha = 0.10f))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFF59E0B).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("🪙", fontSize = 24.sp)
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = TextRes.get("coins_500_pack_title", viewModel.currentLanguage),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isLight) Color(0xFF1E293B) else Color.White
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = TextRes.get("coins_500_pack_desc", viewModel.currentLanguage),
+                                    fontSize = 11.sp,
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_COINS_500)
+                                        if (success != true) {
+                                            simulatedProductId = BillingManager.PRODUCT_COINS_500
+                                            billingStep = 0
+                                            showBillingDialog = true
+                                        }
+                                    } else {
+                                        simulatedProductId = BillingManager.PRODUCT_COINS_500
+                                        billingStep = 0
+                                        showBillingDialog = true
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF59E0B)),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Text(text = coins500Price, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    // Card de 1000 Moedas
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color.White else Color.Black.copy(alpha = 0.45f)
+                        ),
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(1.dp, if (isLight) Color(0xFFE2E8F0) else Color.White.copy(alpha = 0.10f))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFD97706).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("🪙", fontSize = 26.sp)
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = TextRes.get("coins_1000_pack_title", viewModel.currentLanguage),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isLight) Color(0xFF1E293B) else Color.White
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = TextRes.get("coins_1000_pack_desc", viewModel.currentLanguage),
+                                    fontSize = 11.sp,
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_COINS_1000)
+                                        if (success != true) {
+                                            simulatedProductId = BillingManager.PRODUCT_COINS_1000
+                                            billingStep = 0
+                                            showBillingDialog = true
+                                        }
+                                    } else {
+                                        simulatedProductId = BillingManager.PRODUCT_COINS_1000
+                                        billingStep = 0
+                                        showBillingDialog = true
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD97706)),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Text(text = coins1000Price, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    // Card de 5000 Moedas
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color.White else Color.Black.copy(alpha = 0.45f)
+                        ),
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(1.dp, if (isLight) Color(0xFFE2E8F0) else Color.White.copy(alpha = 0.10f))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFB45309).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("💰", fontSize = 28.sp)
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = TextRes.get("coins_5000_pack_title", viewModel.currentLanguage),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isLight) Color(0xFF1E293B) else Color.White
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = TextRes.get("coins_5000_pack_desc", viewModel.currentLanguage),
+                                    fontSize = 11.sp,
+                                    color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.6f)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_COINS_5000)
+                                        if (success != true) {
+                                            simulatedProductId = BillingManager.PRODUCT_COINS_5000
+                                            billingStep = 0
+                                            showBillingDialog = true
+                                        }
+                                    } else {
+                                        simulatedProductId = BillingManager.PRODUCT_COINS_5000
+                                        billingStep = 0
+                                        showBillingDialog = true
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB45309)),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Text(text = coins5000Price, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Seção de Ofertas Especiais
+                    Text(
+                        text = "🔥 " + (if (viewModel.currentLanguage == "pt") "OFERTAS ESPECIAIS" else if (viewModel.currentLanguage == "es") "OFERTAS ESPECIALES" else if (viewModel.currentLanguage == "fr") "OFFRES SPÉCIALES" else if (viewModel.currentLanguage == "de") "SONDERANGEBOTE" else "SPECIAL OFFERS"),
+                        color = if (isLight) Color(0xFF64748B) else Color.White.copy(alpha = 0.9f),
+                        fontWeight = FontWeight.Black,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                    )
+
+                    // Combo Alquimista Especial Card (Super Premium com gradiente na borda)
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isLight) Color(0xFFFDF2F8) else Color(0xFF831843).copy(alpha = 0.2f)
+                        ),
+                        shape = RoundedCornerShape(20.dp),
+                        border = BorderStroke(
+                            2.dp,
+                            Brush.linearGradient(
+                                listOf(Color(0xFF8B5CF6), Color(0xFFEC4899), Color(0xFFFBBF24))
+                            )
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(18.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(52.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFEC4899).copy(alpha = 0.15f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("🎁", fontSize = 26.sp)
+                                }
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = TextRes.get("combo_pack_title", viewModel.currentLanguage),
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = if (isLight) Color(0xFF9D174D) else Color.White
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = TextRes.get("combo_pack_desc", viewModel.currentLanguage),
+                                        fontSize = 11.sp,
+                                        color = if (isLight) Color(0xFF86198F) else Color.White.copy(alpha = 0.7f),
+                                        lineHeight = 14.sp
+                                    )
+                                }
+                            }
+                            
+                            Spacer(modifier = Modifier.height(14.dp))
+                            
+                            // Visual horizontal layout showing included items
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(if (isLight) Color.White.copy(alpha = 0.5f) else Color.Black.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+                                    .padding(8.dp),
+                                horizontalArrangement = Arrangement.SpaceAround,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Lightbulb, null, tint = Color(0xFFFFC107), modifier = Modifier.size(16.dp))
+                                    Text(" x5", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isLight) Color.Black else Color.White)
+                                }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.OfflineBolt, null, tint = Color(0xFF00ACC1), modifier = Modifier.size(16.dp))
+                                    Text(" x5", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isLight) Color.Black else Color.White)
+                                }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Visibility, null, tint = Color(0xFF10B981), modifier = Modifier.size(16.dp))
+                                    Text(" x5", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isLight) Color.Black else Color.White)
+                                }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.AcUnit, null, tint = Color(0xFF3B82F6), modifier = Modifier.size(16.dp))
+                                    Text(" x5", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isLight) Color.Black else Color.White)
+                                }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text("🪙", fontSize = 14.sp)
+                                    Text(" +1000", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isLight) Color.Black else Color.White)
+                                }
+                            }
+                            
+                            Spacer(modifier = Modifier.height(14.dp))
+                            
+                            Button(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        val success = viewModel.billingManager?.launchBillingFlow(activity, BillingManager.PRODUCT_COMBO_PACK)
+                                        if (success != true) {
+                                            simulatedProductId = BillingManager.PRODUCT_COMBO_PACK
+                                            billingStep = 0
+                                            showBillingDialog = true
+                                        }
+                                    } else {
+                                        simulatedProductId = BillingManager.PRODUCT_COMBO_PACK
+                                        billingStep = 0
+                                        showBillingDialog = true
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEC4899)),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth().height(44.dp)
+                            ) {
+                                Text(
+                                    text = comboPackPrice,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 14.sp
+                                )
                             }
                         }
                     }
@@ -772,19 +1499,31 @@ fun StoreView(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Enigma Bottles - Premium Vitalício",
+                                        text = when (simulatedProductId) {
+                                            BillingManager.PRODUCT_PACK_HINTS -> TextRes.get("hints_pack_title", viewModel.currentLanguage)
+                                            BillingManager.PRODUCT_PACK_XRAY -> TextRes.get("xray_pack_title", viewModel.currentLanguage)
+                                            BillingManager.PRODUCT_PACK_REVEAL -> TextRes.get("reveal_pack_title", viewModel.currentLanguage)
+                                            BillingManager.PRODUCT_PACK_FREEZE -> TextRes.get("freeze_pack_title", viewModel.currentLanguage)
+                                            else -> "Enigma Bottles - Premium Vitalício"
+                                        },
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Black,
                                         color = Color(0xFF0F172A)
                                     )
                                     Text(
-                                        text = "com.aistudio.enigmabottles",
+                                        text = "com.enigmabottle",
                                         fontSize = 11.sp,
                                         color = Color(0xFF64748B)
                                     )
                                 }
                                 Text(
-                                    text = "R$ 9,90",
+                                    text = when (simulatedProductId) {
+                                        BillingManager.PRODUCT_PACK_HINTS -> hintsPackPrice
+                                        BillingManager.PRODUCT_PACK_XRAY -> xrayPackPrice
+                                        BillingManager.PRODUCT_PACK_REVEAL -> revealPackPrice
+                                        BillingManager.PRODUCT_PACK_FREEZE -> freezePackPrice
+                                        else -> premiumPrice
+                                    },
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Black,
                                     color = Color(0xFF01875F),

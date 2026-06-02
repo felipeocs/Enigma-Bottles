@@ -1,8 +1,9 @@
-﻿package com.enigmabottle
+package com.enigmabottle
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.compose.BackHandler
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.*
@@ -27,11 +28,16 @@ import kotlinx.coroutines.delay
 import androidx.lifecycle.lifecycleScope
 import androidx.compose.ui.platform.LocalContext
 import android.app.Activity
+import android.content.Context
+import android.os.Vibrator
+import android.os.VibrationEffect
+import android.os.Build
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AdManager.initialize(applicationContext) // Mover para cima ou manter no onCreate
         TextRes.init(applicationContext)
         enableEdgeToEdge()
 
@@ -44,18 +50,66 @@ class MainActivity : ComponentActivity() {
             GameViewModelFactory(repository)
         }
 
-        // Inicializa o gerenciador de anúncios do AdMob
-        AdManager.initialize(applicationContext)
-
         // Inicializa o gerenciador de compras do Google Play Billing
-        val billingManager = BillingManager(applicationContext, lifecycleScope) { purchased ->
-            if (purchased) {
-                viewModel.buyAdFreePlan()
+        val billingManager = BillingManager(
+            context = applicationContext,
+            coroutineScope = lifecycleScope,
+            onPremiumPurchased = { purchased ->
+                if (purchased) {
+                    viewModel.buyAdFreePlan()
+                }
+            },
+            onHintsPurchased = { count ->
+                viewModel.addHints(count)
+            },
+            onXRayPurchased = { count ->
+                viewModel.addXRay(count)
+            },
+            onRevealPurchased = { count ->
+                viewModel.addReveal(count)
+            },
+            onFreezePurchased = { count ->
+                viewModel.addFreeze(count)
+            },
+            onCoinsPurchased = { count ->
+                viewModel.addCoins(count)
+            },
+            onComboPurchased = {
+                viewModel.addComboPack()
             }
-        }
+        )
         viewModel.setBilling(billingManager)
 
+        // Configura vibração nativa retrocompatível
+        viewModel.triggerVibration = { type ->
+            val profile = viewModel.userProfile.value
+            if (profile.isVibrationEnabled) {
+                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                if (vibrator != null) {
+                    vibrateDevice(vibrator, type)
+                }
+            }
+        }
+
         setContent {
+            val currentScreen = viewModel.currentScreen
+            val backEnabled = currentScreen != Screen.HOME && currentScreen != Screen.SPLASH
+            BackHandler(enabled = backEnabled) {
+                if (currentScreen == Screen.GAME_PLAY) {
+                    if (viewModel.quitDialogVisible) {
+                        viewModel.quitDialogVisible = false
+                        viewModel.resumeGame()
+                    } else if (viewModel.isGameOver) {
+                        viewModel.navigateTo(Screen.HOME)
+                    } else {
+                        viewModel.pauseGame()
+                        viewModel.quitDialogVisible = true
+                    }
+                } else {
+                    viewModel.navigateTo(Screen.HOME)
+                }
+            }
+
             val profile by viewModel.userProfile.collectAsState()
             val isLight = profile.activeBgId == "sleek_interface" || profile.activeBgId.startsWith("clear_")
 
@@ -83,13 +137,11 @@ class MainActivity : ComponentActivity() {
                         // --- DAILY LOGIN REWARD CALENDAR DIALOG ---
                         if (viewModel.showDailyRewardDialog) {
                             val currentStreak = viewModel.currentStreakDay
-                            val claimed = viewModel.dailyRewardClaimedThisTurn
+                            val claimed = viewModel.dailyRewardClaimedThisTurn || (viewModel.currentWeekDay in viewModel.claimedDaysSet)
 
                             AlertDialog(
                                 onDismissRequest = { 
-                                    if (claimed) {
-                                        viewModel.showDailyRewardDialog = false 
-                                    }
+                                    viewModel.showDailyRewardDialog = false 
                                 },
                                 title = {
                                     Column(
@@ -123,9 +175,9 @@ class MainActivity : ComponentActivity() {
                                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
                                             for (day in 1..4) {
-                                                val isCurrent = (day == currentStreak)
-                                                val isPast = (day < currentStreak)
-                                                val isClaimedToday = (isCurrent && claimed)
+                                                val isCurrent = (day == viewModel.currentWeekDay)
+                                                val isPast = (day in viewModel.claimedDaysSet)
+                                                val isClaimedToday = (isCurrent && isPast)
 
                                                 Card(
                                                     colors = CardDefaults.cardColors(
@@ -177,9 +229,9 @@ class MainActivity : ComponentActivity() {
                                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
                                             for (day in 5..7) {
-                                                val isCurrent = (day == currentStreak)
-                                                val isPast = (day < currentStreak)
-                                                val isClaimedToday = (isCurrent && claimed)
+                                                val isCurrent = (day == viewModel.currentWeekDay)
+                                                val isPast = (day in viewModel.claimedDaysSet)
+                                                val isClaimedToday = (isCurrent && isPast)
 
                                                 Card(
                                                     colors = CardDefaults.cardColors(
@@ -568,6 +620,25 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+    private fun vibrateDevice(vibrator: Vibrator, type: VibrationType) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val effect = when (type) {
+                VibrationType.CLICK -> VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE)
+                VibrationType.POWERUP -> VibrationEffect.createWaveform(longArrayOf(0, 60, 40, 60), -1)
+                VibrationType.SUCCESS -> VibrationEffect.createWaveform(longArrayOf(0, 100, 50, 100, 50, 300), -1)
+                VibrationType.FAILURE -> VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE)
+            }
+            vibrator.vibrate(effect)
+        } else {
+            @Suppress("DEPRECATION")
+            when (type) {
+                VibrationType.CLICK -> vibrator.vibrate(30)
+                VibrationType.POWERUP -> vibrator.vibrate(longArrayOf(0, 60, 40, 60), -1)
+                VibrationType.SUCCESS -> vibrator.vibrate(longArrayOf(0, 100, 50, 100, 50, 300), -1)
+                VibrationType.FAILURE -> vibrator.vibrate(500)
             }
         }
     }

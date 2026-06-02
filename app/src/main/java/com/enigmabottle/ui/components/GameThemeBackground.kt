@@ -1,4 +1,4 @@
-﻿package com.enigmabottle.ui.components
+package com.enigmabottle.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -254,58 +254,7 @@ fun GameThemeBackground(
                     drawCircle(Color.White.copy(alpha = 0.9f), 4f, Offset(width * 0.78f, height * 0.65f))
                 }
                 else -> {
-                    // "wood" shelf background drawing
-                    // Draw solid horizontal shelving planks underneath bottle placement area
-                    val shelfColor = Color(0xFF4E342E) // Solid, rich dark wood color
-                    val shelfTopY = height * 0.58f
-                    val shelfH = height * 0.035f
-
-                    // Main wooden plank shelf 1
-                    // Underneath dark drop shadow
-                    drawRoundRect(
-                        color = Color.Black.copy(alpha = 0.25f),
-                        topLeft = Offset(width * 0.05f, shelfTopY + 4f),
-                        size = Size(width * 0.9f, shelfH),
-                        cornerRadius = CornerRadius(10f, 10f)
-                    )
-                    // Solid filled plank
-                    drawRoundRect(
-                        color = shelfColor,
-                        topLeft = Offset(width * 0.05f, shelfTopY),
-                        size = Size(width * 0.9f, shelfH),
-                        cornerRadius = CornerRadius(10f, 10f)
-                    )
-                    // Highlights on top edge of plank
-                    drawLine(
-                        color = Color(0xFF8D6E63).copy(alpha = 0.4f),
-                        start = Offset(width * 0.08f, shelfTopY + 2f),
-                        end = Offset(width * 0.92f, shelfTopY + 2f),
-                        strokeWidth = 2.dp.toPx()
-                    )
-
-                    // Secondary wooden plank shelf 2
-                    val shelfTopY2 = height * 0.85f
-                    // Underneath dark drop shadow
-                    drawRoundRect(
-                        color = Color.Black.copy(alpha = 0.25f),
-                        topLeft = Offset(width * 0.05f, shelfTopY2 + 4f),
-                        size = Size(width * 0.9f, shelfH),
-                        cornerRadius = CornerRadius(10f, 10f)
-                    )
-                    // Solid filled plank
-                    drawRoundRect(
-                        color = shelfColor,
-                        topLeft = Offset(width * 0.05f, shelfTopY2),
-                        size = Size(width * 0.9f, shelfH),
-                        cornerRadius = CornerRadius(10f, 10f)
-                    )
-                    // Highlights on top edge of plank
-                    drawLine(
-                        color = Color(0xFF8D6E63).copy(alpha = 0.4f),
-                        start = Offset(width * 0.08f, shelfTopY2 + 2f),
-                        end = Offset(width * 0.92f, shelfTopY2 + 2f),
-                        strokeWidth = 2.dp.toPx()
-                    )
+                    // "wood" shelf drawing removed by request
                 }
             }
         }
