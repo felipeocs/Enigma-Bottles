@@ -68,7 +68,7 @@
     <string name="congrat_badge">Trophées du Mois Débloqués !</string>
     <string name="saved">Sauvegarde Locale Effectuée</string>
     <string name="terms_text">CONDITIONS D\'UTILISATION\n\n1. Licence d\'Utilisation : Nous vous accordons une licence personnelle limitée pour jouer.\n2. Économie virtuelle : Les skins, vies ou pièces n\'ont aucune valeur monétaire réelle.\n3. Contenu de jeu : Nous nous réservons le droit de modifier les récompenses de défis à tout moment.\n4. Propriété : Les codes, designs et interfaces restent notre propriété intellectuelle.</string>
-    <string name="privacy_text">CONFIDENTIALITÉ\n\n1. Données : Nous collectons des analyses de jeu anonymes pour équilibrer les niveaux.\n2. Stockage : Votre progression réside exclusivement en mémoire locale dans votre appareil mobile SQLite.\n3. Publicités : Des tiers peuvent lire votre identifiant publicitaire pour cibler des annonces.\n4. Gestion : Effacer les données de l\'application réinitialisera votre compte définitivement.</string>
+    <string name="privacy_text">Politique de Confidentialité : Enigma Bottles\nDernière mise à jour : 3 juin 2026\n\nCette politique de confidentialité régit l\'application mobile Enigma Bottles pour les appareils Android. Nous nous engageons à protéger et à respecter la vie privée de nos utilisateurs. Cette politique décrit comment les informations sont collectées, utilisées et protégées.\n\n1. Collecte et Utilisation des Informations\nA. Données sauvegardées localement\nEnigma Bottles est conçu pour fonctionner principalement de manière locale et hors ligne.\nCe que nous collectons localement : La progression du jeu, l\'historique des victoires et des défaites, le solde des pièces virtuelles, les vies, les réalisations et les éléments de personnalisation (bouteilles et arrière-plans) achetés dans la boutique interne du jeu.\nHébergement : Toutes ces données sont stockées localement et en toute sécurité sur l\'appareil de l\'utilisateur à l\'aide de la base de données Room (SQLite). Nous ne transmettons, ne partageons ni ne stockons ces données de progression et d\'inventaire sur nos serveurs cloud privés.\n\nB. Informations collectées par des services tiers\nPour permettre les achats intégrés et l\'affichage de publicités, le jeu utilise des services tiers qui peuvent collecter des données techniques à partir de l\'appareil de l\'utilisateur conformément à leurs propres politiques de confidentialité. Ces services sont :\n- Google Play Services : Utilisé à des fins d\'authentification dans la boutique d\'applications et pour la maintenance de l\'écosystème Android.\n- Google Play Billing : Utilisé pour traiter les transactions financières des achats intégrés (tels que la suppression des publicités et l\'acquisition d\'éléments). Nous n\'avons pas accès à vos données de carte de crédit, comptes bancaires ou informations financières personnelles ; toutes les transactions sont traitées en toute sécurité et exclusivement par Google lui-même.\n- Google AdMob (Réseau publicitaire) : Utilisé pour afficher des publicités dans le jeu (telles que des publicités interstitielles ou avec récompense). Le SDK d\'AdMob peut collecter l\'identifiant publicitaire de votre appareil (GAID), des données réseau et une télémétrie de base pour diffuser des publicités personnalisées ou surveiller les performances des campagnes.\n\n2. Cookies et Suivi\nL\'application n\'utilise pas de \"cookies\" directement dans le code natif. Cependant, les SDK intégrés de publicité et de facturation tiers mentionnés à la section 1B peuvent utiliser des identifiants d\'appareil et des technologies similaires pour optimiser les publicités et les transactions financières.\n\n3. Partage des Données\nNous ne vendons, ne louons, n\'échangeons ni ne partageons aucune donnée personnelle ou de jeu de nos utilisateurs avec des tiers, sauf si la loi l\'exige ou pour répondre aux exigences opérationnelles des prestataires de services décrits à la section 1B.\n\n4. Sécurité des Données\nNous mettons en œuvre les meilleures pratiques de sécurité dans le développement de l\'application afin de protéger les fichiers de base de données locaux enregistrés dans le bac à sable (sandbox) du système Android de votre appareil mobile contre tout accès non autorisé.\n\n5. Droits des Utilisateurs (LGPD et RGPD)\nConformément à la loi générale sur la protection des données (LGPD - Brésil) et au règlement général sur la protection des données (RGPD - Union européenne), vous avez le droit de contrôler les informations associées à votre appareil :\n- Suppression des données : Étant donné que vos données de progression et d\'achats sont enregistrées localement, vous pouvez les supprimer complètement à tout moment en désinstallant l\'application de votre appareil ou en accédant à Paramètres -> Applications -> Enigma Bottles -> Stockage -> Effacer les données.\n- Identification publicitaire : Vous pouvez gérer, réinitialiser ou désactiver l\'utilisation de l\'identifiant publicitaire pour la personnalisation des publicités dans les paramètres de votre système d\'exploitation Android (Paramètres -> Confidentialité -> Annonces).\n\n6. Vie Privée des Enfants\nEnigma Bottles est un jeu de réflexion et de logique gratuit pour tous les âges. Nous ne collectons pas intentionnellement de données personnelles d\'enfants. Si les parents ou tuteurs constatent que des données ont été transmises à des services tiers sans leur consentement, veuillez nous contacter afin que nous puissions prendre les mesures appropriées avec nos réseaux partenaires.\n\n7. Modifications de cette Politique de Confidentialité\nNous pouvons mettre à jour notre politique de confidentialité périodiquement. Il est recommandé de consulter cette page de temps en temps pour suivre toute modification. Les modifications prennent effet immédiatement après leur publication sur cette page.\n\n8. Contact\nSi vous avez des questions ou des suggestions concernant cette politique de confidentialité, vous pouvez nous contacter par e-mail à : felipeoc.sousa@gmail.com</string>
     <string name="daily_distillate">Jour %1$d - Distillat Quotidien</string>
     <string name="difficulty_label">Difficulté : %1$s</string>
     <string name="daily_completed">Défi Terminé !</string>
@@ -318,4 +318,45 @@
     <string name="exit_no_moves_warn">Vous n\'avez pas encore effectué de coup. Si vous décidez de quitter maintenant, la partie se terminera sans pénalité de vie !</string>
     <string name="exit_without_penalty_btn">Quitter sans Pénalité</string>
     <string name="exit_no_moves_toast">Partie terminée sans pénalité.</string>
+
+    <!-- Nouveaux Aspects de Flacons (v1.9) -->
+    <string name="skin_hourglass_name">Sablier du Temps</string>
+    <string name="skin_hourglass_desc">Flacon fin en forme de sablier qui manipule le temps.</string>
+    <string name="skin_diamond_flask_name">Flacon Diamant</string>
+    <string name="skin_diamond_flask_desc">Flacon facetté en forme de diamant taillé brillant.</string>
+    <string name="skin_skull_name">Crâne Macabre</string>
+    <string name="skin_skull_desc">Conteneur pirate sombre en forme de crâne alchimique.</string>
+    <string name="skin_heart_vial_name">Fiole de Cœur</string>
+    <string name="skin_heart_vial_desc">Fiole romantique incurvée en forme de cœur guérisseur.</string>
+    <string name="skin_cauldron_flask_name">Flacon Chaudron</string>
+    <string name="skin_cauldron_flask_desc">Flacon bulbeux avec poignées latérales ressemblant à un mini chaudron.</string>
+    <string name="skin_prism_flask_name">Flacon Prismatique</string>
+    <string name="skin_prism_flask_desc">Géométrie dynamique qui réfracte la lumière alchimique.</string>
+
+    <!-- Nouveaux Thèmes (v1.9) -->
+    <string name="bg_cyberpunk_name">Ruelle Cyberpunk</string>
+    <string name="bg_cyberpunk_desc">Futur technologique sous une pluie constante et des néons bleus et roses.</string>
+    <string name="bg_mystic_swamp_name">Marais Mystique</string>
+    <string name="bg_mystic_swamp_desc">Eaux sombres de la forêt avec de mystérieux feux follets flottants.</string>
+    <string name="bg_volcano_name">Chambre de Lave</string>
+    <string name="bg_volcano_desc">Caverne volcanique profonde avec des rivières de magma fondu brûlant.</string>
+    <string name="bg_frozen_glacier_name">Glacier Éternel</string>
+    <string name="bg_frozen_glacier_desc">Caverne de glace bleue compressée au sommet des montagnes polaires.</string>
+    <string name="bg_ancient_temple_name">Temple en Ruines</string>
+    <string name="bg_ancient_temple_desc">Murs de pierre ancestraux gravés de runes magiques lumineuses.</string>
+    <string name="bg_enchanted_forest_name">Forêt Enchantée</string>
+    <string name="bg_enchanted_forest_desc">Bosquet magique avec des rayons de soleil dorés et des feuilles au vent.</string>
+    <string name="bg_steampunk_name">Atelier Steampunk</string>
+    <string name="bg_steampunk_desc">Fonderie industrielle victorienne avec engrenages de bronze et vapeur.</string>
+    <string name="bg_underwater_reef_name">Récif de Corail</string>
+    <string name="bg_underwater_reef_desc">Plongée en haute mer entourée de coraux colorés et de poissons actifs.</string>
+    <string name="bg_supernova_name">Supernova Stellaire</string>
+    <string name="bg_supernova_desc">Spectacle cosmique d\'une étoile explosant dans des couleurs dramatiques.</string>
+    <string name="bg_retro_arcade_name">Arcade Rétro</string>
+    <string name="bg_retro_arcade_desc">Panneaux de pixels lumineux et néons des années 80.</string>
+    <string name="bg_dark_interface_name">Interface Sombre</string>
+    <string name="bg_dark_interface_desc">Interface minimaliste et confortable en ardoise sombre pour les sessions nocturnes.</string>
+    <string name="bg_starry_night_name">Nuit Étoilée</string>
+    <string name="bg_starry_night_desc">Ciel nocturne étoilé avec un croissant de lune brillant et des constellations.</string>
+    <string name="view_online">Voir en ligne</string>
 </resources>

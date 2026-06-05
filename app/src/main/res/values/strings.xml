@@ -68,7 +68,7 @@
     <string name="congrat_badge">Monthly Awards Unlocked!</string>
     <string name="saved">Game Saved Locally</string>
     <string name="terms_text">TERMS OF USE\n\n1. End-User License: We grant you a personal, non-transferable, and limited license to play Enigma Bottles.\n2. Economy: In-game items (coins, lives, skins) hold no real monetary value.\n3. Content adjustments: We reserve the right to regulate challenge reward policies at any time.\n4. IP: All artwork, custom shaders, symbols, and concepts are protected intellectual property.</string>
-    <string name="privacy_text">PRIVACY POLICY\n\n1. Data Collection: We gather anonymous game metrics (playtime, logical moves) to optimize layout parameters.\n2. Local Space: Your database and cosmetic unlocks reside entirely inside local device SQLite cache.\n3. Ads Networks: Third party advertisers (AdMob) may retrieve device advertising identifiers.\n4. Opt-Out: Erasing app storage cache purges all locally stored profile metadata.</string>
+    <string name="privacy_text">Privacy Policy: Enigma Bottles\nLast Updated: June 3, 2026\n\nThis privacy policy governs the mobile application Enigma Bottles for Android devices. We are committed to protecting and respecting our users\' privacy. This policy describes how information is collected, used, and protected.\n\n1. Information Collection and Use\nA. Locally Saved Data\nEnigma Bottles is designed to operate primarily locally and offline.\nWhat we collect locally: Game progress, win/loss history, virtual coin balance, lives, achievements, and customization items (bottles and backgrounds) purchased in the in-game shop.\nHosting: All this data is stored locally and securely on the user\'s device using the Room database (SQLite). We do not transmit, share, or store this progress and inventory data on our private cloud servers.\n\nB. Information Collected by Third-Party Services\nTo enable in-app purchases and display advertisements, the game uses third-party services that may collect technical data from the user\'s device according to their own privacy policies. These services are:\n- Google Play Services: Used for authentication in the app store and maintenance of the Android ecosystem.\n- Google Play Billing: Used to process financial transactions for integrated purchases (such as ad removal and item acquisition). We do not have access to your credit card data, bank accounts, or personal financial information; all transactions are securely and exclusively processed by Google itself.\n- Google AdMob (Ad Network): Used to display ads within the game (such as interstitial or rewarded ads). The AdMob SDK may collect your device\'s advertising ID (GAID), network data, and basic telemetry to serve personalized ads or monitor campaign performance.\n\n2. Cookies and Tracking\nThe application does not use \"cookies\" directly in the native code. However, the integrated third-party advertising and billing SDKs mentioned in Section 1B may use device identifiers and similar technologies to optimize advertisements and financial transactions.\n\n3. Data Sharing\nWe do not sell, rent, trade, or share any personal or gameplay data of our users with third parties, except as required by law or to meet the operational requirements of the service providers described in Section 1B.\n\n4. Data Security\nWe implement recommended security practices in the application development to protect local database files written to the Android system sandbox on your mobile device against unauthorized access.\n\n5. User Rights (LGPD and GDPR)\nIn compliance with the General Data Protection Law (LGPD - Brazil) and the General Data Protection Regulation (GDPR - European Union), you have the right to control the information associated with your device:\n- Data Deletion: Since your progress and purchase data are saved locally, you can delete them completely at any time by uninstalling the application from your device or by going to Settings -> Apps -> Enigma Bottles -> Storage -> Clear Data.\n- Advertising Identification: You can manage, reset, or disable the use of the advertising ID for ad personalization in your Android operating system settings (Settings -> Privacy -> Ads).\n\n6. Children\'s Privacy\nEnigma Bottles is a puzzle and logic game free for all ages. We do not intentionally collect personal data from children. If parents or guardians identify that any data has been transmitted to third-party services without consent, please contact us so we can take appropriate measures with our partner networks.\n\n7. Changes to this Privacy Policy\nWe may update our Privacy Policy from time to time. It is recommended to review this page periodically to follow any modifications. Changes take effect immediately after being posted on this page.\n\n8. Contact\nIf you have questions or suggestions about this Privacy Policy, you can contact us at: felipeoc.sousa@gmail.com</string>
     <string name="lang_title">Game Language</string>
     <string name="game_preferences">Game Preferences</string>
     <string name="audio_enabled">General Audio: Enabled</string>
@@ -318,4 +318,45 @@
     <string name="exit_no_moves_warn">You haven\'t made any moves yet. If you decide to exit now, the game will end without any life penalty!</string>
     <string name="exit_without_penalty_btn">Exit without Penalty</string>
     <string name="exit_no_moves_toast">Game ended without penalties.</string>
+
+    <!-- New Bottle Skins (v1.9) -->
+    <string name="skin_hourglass_name">Time Hourglass</string>
+    <string name="skin_hourglass_desc">Slim hourglass-shaped flask that manipulates time.</string>
+    <string name="skin_diamond_flask_name">Diamond Flask</string>
+    <string name="skin_diamond_flask_desc">Faceted flask shaped like a brilliant cut diamond.</string>
+    <string name="skin_skull_name">Macabre Skull</string>
+    <string name="skin_skull_desc">Dark pirate container shaped like an alchemical skull.</string>
+    <string name="skin_heart_vial_name">Heart Vial</string>
+    <string name="skin_heart_vial_desc">Curved romantic vial shaped like a healing heart.</string>
+    <string name="skin_cauldron_flask_name">Cauldron Flask</string>
+    <string name="skin_cauldron_flask_desc">Bulbous flask with side handles resembling a mini cauldron.</string>
+    <string name="skin_prism_flask_name">Prism Flask</string>
+    <string name="skin_prism_flask_desc">Sharp triangular geometry that refracts alchemical light.</string>
+
+    <!-- New Backgrounds (v1.9) -->
+    <string name="bg_cyberpunk_name">Cyberpunk Alley</string>
+    <string name="bg_cyberpunk_desc">Technological future under constant rain and blue and pink neon lights.</string>
+    <string name="bg_mystic_swamp_name">Mystic Swamp</string>
+    <string name="bg_mystic_swamp_desc">Dark forest waters with mysterious floating will-o\'-the-wisps.</string>
+    <string name="bg_volcano_name">Lava Chamber</string>
+    <string name="bg_volcano_desc">Deep volcanic cavern with burning rivers of molten magma.</string>
+    <string name="bg_frozen_glacier_name">Eternal Glacier</string>
+    <string name="bg_frozen_glacier_desc">Compressed blue ice cavern at the top of the polar mountains.</string>
+    <string name="bg_ancient_temple_name">Ruined Temple</string>
+    <string name="bg_ancient_temple_desc">Ancient stone walls engraved with glowing magical runes.</string>
+    <string name="bg_enchanted_forest_name">Enchanted Woods</string>
+    <string name="bg_enchanted_forest_desc">Magical grove with golden sunbeams and leaves in the wind.</string>
+    <string name="bg_steampunk_name">Steampunk Workshop</string>
+    <string name="bg_steampunk_desc">Victorian industrial foundry with bronze gears and steam.</string>
+    <string name="bg_underwater_reef_name">Coral Reef</string>
+    <string name="bg_underwater_reef_desc">Deep ocean dive surrounded by colourful corals and active fish.</string>
+    <string name="bg_supernova_name">Stellar Supernova</string>
+    <string name="bg_supernova_desc">Cosmic spectacle of an exploding star in dramatic colors.</string>
+    <string name="bg_retro_arcade_name">Retro Arcade</string>
+    <string name="bg_retro_arcade_desc">Glowing pixel panels and neon lights from the 80s.</string>
+    <string name="bg_dark_interface_name">Dark Interface</string>
+    <string name="bg_dark_interface_desc">Minimalist and comfortable dark slate interface for night sessions.</string>
+    <string name="bg_starry_night_name">Starry Night</string>
+    <string name="bg_starry_night_desc">Starry night sky with a shining crescent moon and constellations.</string>
+    <string name="view_online">View Online</string>
 </resources>

@@ -77,6 +77,12 @@ fun StoreView(
     }
 
     val billingManager = viewModel.billingManager
+
+    LaunchedEffect(billingManager) {
+        billingManager?.queryPurchases()
+        billingManager?.queryProductDetails()
+    }
+
     val productsDetailsMap by if (billingManager != null) {
         billingManager.productsDetailsMapState.collectAsState()
     } else {
@@ -112,28 +118,46 @@ fun StoreView(
 
     val skinItems = listOf(
         SkinCommodity("classic", TextRes.get("skin_classic_name", viewModel.currentLanguage), TextRes.get("skin_classic_desc", viewModel.currentLanguage), 0, Color(0xFFE53935)),
-        SkinCommodity("test_tube", TextRes.get("skin_test_tube_name", viewModel.currentLanguage), TextRes.get("skin_test_tube_desc", viewModel.currentLanguage), 120, Color(0xFF22C55E)),
-        SkinCommodity("flask", TextRes.get("skin_flask_name", viewModel.currentLanguage), TextRes.get("skin_flask_desc", viewModel.currentLanguage), 80, Color(0xFF43A047)),
-        SkinCommodity("potion", TextRes.get("skin_potion_name", viewModel.currentLanguage), TextRes.get("skin_potion_desc", viewModel.currentLanguage), 150, Color(0xFF9C27B0)),
-        SkinCommodity("potion_cork", TextRes.get("skin_potion_cork_name", viewModel.currentLanguage), TextRes.get("skin_potion_cork_desc", viewModel.currentLanguage), 250, Color(0xFFFF7043)),
+        SkinCommodity("test_tube", TextRes.get("skin_test_tube_name", viewModel.currentLanguage), TextRes.get("skin_test_tube_desc", viewModel.currentLanguage), 400, Color(0xFF22C55E)),
+        SkinCommodity("flask", TextRes.get("skin_flask_name", viewModel.currentLanguage), TextRes.get("skin_flask_desc", viewModel.currentLanguage), 400, Color(0xFF43A047)),
+        SkinCommodity("potion", TextRes.get("skin_potion_name", viewModel.currentLanguage), TextRes.get("skin_potion_desc", viewModel.currentLanguage), 400, Color(0xFF9C27B0)),
+        SkinCommodity("potion_cork", TextRes.get("skin_potion_cork_name", viewModel.currentLanguage), TextRes.get("skin_potion_cork_desc", viewModel.currentLanguage), 400, Color(0xFFFF7043)),
+        SkinCommodity("hourglass", TextRes.get("skin_hourglass_name", viewModel.currentLanguage), TextRes.get("skin_hourglass_desc", viewModel.currentLanguage), 400, Color(0xFFFB923C)),
+        SkinCommodity("heart_vial", TextRes.get("skin_heart_vial_name", viewModel.currentLanguage), TextRes.get("skin_heart_vial_desc", viewModel.currentLanguage), 400, Color(0xFFF43F5E)),
         SkinCommodity("neon", TextRes.get("skin_neon_name", viewModel.currentLanguage), TextRes.get("skin_neon_desc", viewModel.currentLanguage), 400, Color(0xFF00ACC1)),
-        SkinCommodity("crystals", TextRes.get("skin_crystals_name", viewModel.currentLanguage), TextRes.get("skin_crystals_desc", viewModel.currentLanguage), 500, Color(0xFFD946EF)),
-        SkinCommodity("royal", TextRes.get("skin_royal_name", viewModel.currentLanguage), TextRes.get("skin_royal_desc", viewModel.currentLanguage), 650, Color(0xFFFFD700))
+        SkinCommodity("diamond_flask", TextRes.get("skin_diamond_flask_name", viewModel.currentLanguage), TextRes.get("skin_diamond_flask_desc", viewModel.currentLanguage), 400, Color(0xFF38BDF8)),
+        SkinCommodity("crystals", TextRes.get("skin_crystals_name", viewModel.currentLanguage), TextRes.get("skin_crystals_desc", viewModel.currentLanguage), 400, Color(0xFFD946EF)),
+        SkinCommodity("cauldron_flask", TextRes.get("skin_cauldron_flask_name", viewModel.currentLanguage), TextRes.get("skin_cauldron_flask_desc", viewModel.currentLanguage), 400, Color(0xFF2DD4BF)),
+        SkinCommodity("skull", TextRes.get("skin_skull_name", viewModel.currentLanguage), TextRes.get("skin_skull_desc", viewModel.currentLanguage), 400, Color(0xFF64748B)),
+        SkinCommodity("royal", TextRes.get("skin_royal_name", viewModel.currentLanguage), TextRes.get("skin_royal_desc", viewModel.currentLanguage), 400, Color(0xFFFFD700)),
+        SkinCommodity("prism_flask", TextRes.get("skin_prism_flask_name", viewModel.currentLanguage), TextRes.get("skin_prism_flask_desc", viewModel.currentLanguage), 400, Color(0xFFA855F7))
     )
 
     val bgItems = listOf(
         BgCommodity("sleek_interface", TextRes.get("bg_sleek_interface_name", viewModel.currentLanguage), TextRes.get("bg_sleek_interface_desc", viewModel.currentLanguage), 0),
-        BgCommodity("clear_aurora", TextRes.get("bg_clear_aurora_name", viewModel.currentLanguage), TextRes.get("bg_clear_aurora_desc", viewModel.currentLanguage), 60),
-        BgCommodity("clear_sunset", TextRes.get("bg_clear_sunset_name", viewModel.currentLanguage), TextRes.get("bg_clear_sunset_desc", viewModel.currentLanguage), 80),
-        BgCommodity("clear_mint", TextRes.get("bg_clear_mint_name", viewModel.currentLanguage), TextRes.get("bg_clear_mint_desc", viewModel.currentLanguage), 120),
-        BgCommodity("clear_lavender", TextRes.get("bg_clear_lavender_name", viewModel.currentLanguage), TextRes.get("bg_clear_lavender_desc", viewModel.currentLanguage), 150),
-        BgCommodity("clear_sakura", TextRes.get("bg_clear_sakura_name", viewModel.currentLanguage), TextRes.get("bg_clear_sakura_desc", viewModel.currentLanguage), 180),
-        BgCommodity("wood", TextRes.get("bg_wood_name", viewModel.currentLanguage), TextRes.get("bg_wood_desc", viewModel.currentLanguage), 40),
-        BgCommodity("lab", TextRes.get("bg_lab_name", viewModel.currentLanguage), TextRes.get("bg_lab_desc", viewModel.currentLanguage), 100),
-        BgCommodity("magic", TextRes.get("bg_magic_name", viewModel.currentLanguage), TextRes.get("bg_magic_desc", viewModel.currentLanguage), 200),
-        BgCommodity("abyss", TextRes.get("bg_abyss_name", viewModel.currentLanguage), TextRes.get("bg_abyss_desc", viewModel.currentLanguage), 300),
-        BgCommodity("neon_grid", TextRes.get("bg_neon_grid_name", viewModel.currentLanguage), TextRes.get("bg_neon_grid_desc", viewModel.currentLanguage), 350),
-        BgCommodity("cosmic", TextRes.get("bg_cosmic_name", viewModel.currentLanguage), TextRes.get("bg_cosmic_desc", viewModel.currentLanguage), 500)
+        BgCommodity("dark_interface", TextRes.get("bg_dark_interface_name", viewModel.currentLanguage), TextRes.get("bg_dark_interface_desc", viewModel.currentLanguage), 0),
+        BgCommodity("clear_aurora", TextRes.get("bg_clear_aurora_name", viewModel.currentLanguage), TextRes.get("bg_clear_aurora_desc", viewModel.currentLanguage), 400),
+        BgCommodity("clear_sunset", TextRes.get("bg_clear_sunset_name", viewModel.currentLanguage), TextRes.get("bg_clear_sunset_desc", viewModel.currentLanguage), 400),
+        BgCommodity("clear_mint", TextRes.get("bg_clear_mint_name", viewModel.currentLanguage), TextRes.get("bg_clear_mint_desc", viewModel.currentLanguage), 400),
+        BgCommodity("clear_lavender", TextRes.get("bg_clear_lavender_name", viewModel.currentLanguage), TextRes.get("bg_clear_lavender_desc", viewModel.currentLanguage), 400),
+        BgCommodity("clear_sakura", TextRes.get("bg_clear_sakura_name", viewModel.currentLanguage), TextRes.get("bg_clear_sakura_desc", viewModel.currentLanguage), 400),
+        BgCommodity("wood", TextRes.get("bg_wood_name", viewModel.currentLanguage), TextRes.get("bg_wood_desc", viewModel.currentLanguage), 400),
+        BgCommodity("lab", TextRes.get("bg_lab_name", viewModel.currentLanguage), TextRes.get("bg_lab_desc", viewModel.currentLanguage), 400),
+        BgCommodity("magic", TextRes.get("bg_magic_name", viewModel.currentLanguage), TextRes.get("bg_magic_desc", viewModel.currentLanguage), 400),
+        BgCommodity("mystic_swamp", TextRes.get("bg_mystic_swamp_name", viewModel.currentLanguage), TextRes.get("bg_mystic_swamp_desc", viewModel.currentLanguage), 400),
+        BgCommodity("cyberpunk", TextRes.get("bg_cyberpunk_name", viewModel.currentLanguage), TextRes.get("bg_cyberpunk_desc", viewModel.currentLanguage), 400),
+        BgCommodity("enchanted_forest", TextRes.get("bg_enchanted_forest_name", viewModel.currentLanguage), TextRes.get("bg_enchanted_forest_desc", viewModel.currentLanguage), 400),
+        BgCommodity("volcano", TextRes.get("bg_volcano_name", viewModel.currentLanguage), TextRes.get("bg_volcano_desc", viewModel.currentLanguage), 400),
+        BgCommodity("abyss", TextRes.get("bg_abyss_name", viewModel.currentLanguage), TextRes.get("bg_abyss_desc", viewModel.currentLanguage), 400),
+        BgCommodity("frozen_glacier", TextRes.get("bg_frozen_glacier_name", viewModel.currentLanguage), TextRes.get("bg_frozen_glacier_desc", viewModel.currentLanguage), 400),
+        BgCommodity("steampunk", TextRes.get("bg_steampunk_name", viewModel.currentLanguage), TextRes.get("bg_steampunk_desc", viewModel.currentLanguage), 400),
+        BgCommodity("neon_grid", TextRes.get("bg_neon_grid_name", viewModel.currentLanguage), TextRes.get("bg_neon_grid_desc", viewModel.currentLanguage), 400),
+        BgCommodity("ancient_temple", TextRes.get("bg_ancient_temple_name", viewModel.currentLanguage), TextRes.get("bg_ancient_temple_desc", viewModel.currentLanguage), 400),
+        BgCommodity("underwater_reef", TextRes.get("bg_underwater_reef_name", viewModel.currentLanguage), TextRes.get("bg_underwater_reef_desc", viewModel.currentLanguage), 400),
+        BgCommodity("retro_arcade", TextRes.get("bg_retro_arcade_name", viewModel.currentLanguage), TextRes.get("bg_retro_arcade_desc", viewModel.currentLanguage), 400),
+        BgCommodity("supernova", TextRes.get("bg_supernova_name", viewModel.currentLanguage), TextRes.get("bg_supernova_desc", viewModel.currentLanguage), 400),
+        BgCommodity("cosmic", TextRes.get("bg_cosmic_name", viewModel.currentLanguage), TextRes.get("bg_cosmic_desc", viewModel.currentLanguage), 400),
+        BgCommodity("starry_night", TextRes.get("bg_starry_night_name", viewModel.currentLanguage), TextRes.get("bg_starry_night_desc", viewModel.currentLanguage), 400)
     )
 
     val isLight = profile.activeBgId == "sleek_interface" || profile.activeBgId.startsWith("clear_")
@@ -440,17 +464,30 @@ fun StoreView(
                                         .background(
                                             when (bg.id) {
                                                 "sleek_interface" -> Brush.verticalGradient(listOf(Color(0xFFFDFBFF), Color(0xFFF5F3FF)))
+                                                "dark_interface" -> Brush.verticalGradient(listOf(Color(0xFF0F172A), Color(0xFF020617)))
                                                 "clear_aurora" -> Brush.verticalGradient(listOf(Color(0xFFF0FDF4), Color(0xFFFAE8FF)))
                                                 "clear_sunset" -> Brush.verticalGradient(listOf(Color(0xFFFFF7ED), Color(0xFFFEF3C7)))
                                                 "clear_mint" -> Brush.verticalGradient(listOf(Color(0xFFF0FDFA), Color(0xFFECFDF5)))
                                                 "clear_lavender" -> Brush.verticalGradient(listOf(Color(0xFFF5F3FF), Color(0xFFEEF2FF)))
                                                 "clear_sakura" -> Brush.verticalGradient(listOf(Color(0xFFFFF5F5), Color(0xFFFFF0F6)))
+                                                "wood" -> Brush.verticalGradient(listOf(Color(0xFF332014), Color(0xFF180E08)))
                                                 "lab" -> Brush.verticalGradient(listOf(Color(0xFF111E25), Color(0xFF070B0E)))
                                                 "magic" -> Brush.radialGradient(listOf(Color(0xFF1D0E3D), Color(0xFF06030F)))
-                                                "neon_grid" -> Brush.verticalGradient(listOf(Color(0xFF140220), Color(0xFF040008)))
+                                                "mystic_swamp" -> Brush.verticalGradient(listOf(Color(0xFF0D1F11), Color(0xFF030A05)))
+                                                "cyberpunk" -> Brush.verticalGradient(listOf(Color(0xFF0F0B1E), Color(0xFF020106)))
+                                                "enchanted_forest" -> Brush.verticalGradient(listOf(Color(0xFF0A1F0D), Color(0xFF030A04)))
+                                                "volcano" -> Brush.verticalGradient(listOf(Color(0xFF1E0B05), Color(0xFF0C0200)))
                                                 "abyss" -> Brush.verticalGradient(listOf(Color(0xFF021720), Color(0xFF00080C)))
+                                                "frozen_glacier" -> Brush.verticalGradient(listOf(Color(0xFF132F3C), Color(0xFF051119)))
+                                                "steampunk" -> Brush.verticalGradient(listOf(Color(0xFF261D15), Color(0xFF100B07)))
+                                                "neon_grid" -> Brush.verticalGradient(listOf(Color(0xFF140220), Color(0xFF040008)))
+                                                "ancient_temple" -> Brush.verticalGradient(listOf(Color(0xFF1C1D18), Color(0xFF0D0E0B)))
+                                                "underwater_reef" -> Brush.verticalGradient(listOf(Color(0xFF003049), Color(0xFF001524)))
+                                                "retro_arcade" -> Brush.verticalGradient(listOf(Color(0xFF0C041C), Color(0xFF010005)))
+                                                "supernova" -> Brush.verticalGradient(listOf(Color(0xFF3B0D2E), Color(0xFF0F0218)))
                                                 "cosmic" -> Brush.radialGradient(listOf(Color(0xFF200C40), Color(0xFF050110)))
-                                                else -> Brush.verticalGradient(listOf(Color(0xFF332014), Color(0xFF180E08)))
+                                                "starry_night" -> Brush.verticalGradient(listOf(Color(0xFF0B132B), Color(0xFF010409)))
+                                                else -> Brush.verticalGradient(listOf(Color(0xFFFDFBFF), Color(0xFFF5F3FF)))
                                             }
                                         )
                                 )

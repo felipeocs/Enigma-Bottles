@@ -362,7 +362,8 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
     fun startDailyChallenge(dayKey: String, difficulty: String) {
         viewModelScope.launch {
             val p = userProfile.value
-            if (p.lives <= 0) {
+            val hasInfinite = p.isAdFree && p.infiniteLivesEndTime > System.currentTimeMillis()
+            if (p.lives <= 0 && !hasInfinite) {
                 showToast(TextRes.get("lose", currentLanguage))
                 return@launch
             }
@@ -537,7 +538,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                     }
                 }
                 if (!success) {
-                    success = repository.spendCoins(20)
+                    success = repository.spendCoins(40)
                 }
 
                 if (success) {
@@ -695,7 +696,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 }
             }
             if (!success) {
-                success = repository.spendCoins(30)
+                success = repository.spendCoins(60)
             }
 
             if (success) {
@@ -735,7 +736,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 }
             }
             if (!success) {
-                success = repository.spendCoins(50)
+                success = repository.spendCoins(100)
             }
 
             if (success) {
@@ -761,7 +762,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
         if (p.xRayCount > 0) {
             isXRayActive = true
         } else {
-            if (p.coins < 20) {
+            if (p.coins < 40) {
                 showToast(TextRes.get("no_coins", currentLanguage))
                 return
             }
@@ -784,7 +785,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 }
             }
             if (!success) {
-                success = repository.spendCoins(15)
+                success = repository.spendCoins(30)
             }
 
              if (success) {
@@ -837,6 +838,12 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
     fun buyAdFreePlan() {
         viewModelScope.launch {
             repository.updateProfile { it.copy(isAdFree = true) }
+        }
+    }
+
+    fun revokeAdFreePlan() {
+        viewModelScope.launch {
+            repository.updateProfile { it.copy(isAdFree = false) }
         }
     }
 

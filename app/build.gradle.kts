@@ -14,8 +14,8 @@ android {
     applicationId = "com.enigmabottle"
     minSdk = 24
     targetSdk = 36
-    versionCode = 9
-    versionName = "1.8"
+    versionCode = 13
+    versionName = "2.0.3"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -78,6 +78,11 @@ android {
   buildFeatures {
     compose = true
     buildConfig = true
+  }
+  bundle {
+    language {
+      enableSplit = false
+    }
   }
   testOptions { unitTests { isIncludeAndroidResources = true } }
 }

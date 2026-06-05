@@ -189,12 +189,12 @@ fun HomeView(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .padding(bottom = 12.dp)
-                            .size(160.dp)
+                            .size(220.dp)
                     ) {
                         // Outer subtle glow halo
                         Box(
                             modifier = Modifier
-                                .size(155.dp)
+                                .size(215.dp)
                                 .clip(CircleShape)
                                 .background(
                                     Brush.radialGradient(
@@ -210,7 +210,7 @@ fun HomeView(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
                             contentDescription = TextRes.get("app_logo_description", viewModel.currentLanguage),
                             modifier = Modifier
-                                .size(140.dp)
+                                .size(200.dp)
                         )
                     }
                     Text(

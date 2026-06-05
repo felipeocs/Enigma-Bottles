@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.BorderStroke
@@ -34,6 +35,7 @@ fun SettingsView(
     viewModel: GameViewModel,
     modifier: Modifier = Modifier
 ) {
+    val uriHandler = LocalUriHandler.current
     val profile by viewModel.userProfile.collectAsState()
     var termsDialogVisible by remember { mutableStateOf(false) }
     var privacyDialogVisible by remember { mutableStateOf(false) }
@@ -370,6 +372,23 @@ fun SettingsView(
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Text(TextRes.get("aware", viewModel.currentLanguage), color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            try {
+                                uriHandler.openUri("https://sites.google.com/view/enigmabottles-privacy")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    ) {
+                        Text(
+                            text = TextRes.get("view_online", viewModel.currentLanguage),
+                            color = Color(0xFF4F46E5),
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 },
                 title = {

@@ -68,7 +68,7 @@
     <string name="congrat_badge">Monatserfolge Freigeschaltet!</string>
     <string name="saved">Erfolgreich Gespeichert</string>
     <string name="terms_text">NUTZUNGSBEDINGUNGEN\n\n1. Lizenzierung: Wir gewähren eine begrenzte Lizenz zum Spielen.\n2. Virtuelle Ökonomie: Spielgegenstände haben keinen realen Geldwert.\n3. Änderungen: Wir behalten uns das Recht vor, Belohnungssysteme anzupassen.\n4. Eigentum: Sämtliche Spielinhalte und Codes sind geschütztes Eigentum.</string>
-    <string name="privacy_text">DATENSCHUTZ\n\n1. Daten: Wir erheben anonyme Spielstatistiken zur Spieloptimierung.\n2. Speicherung: Ihr Fortschritt wird lokal auf dem Gerät in SQLite gespeichert.\n3. Drittanbieter: Anzeigen-Netzwerke können Ihre Werbe-ID erfassen.\n4. Löschung: Das Löschen der App-Daten setzt Ihr Konto dauerhaft zurück.</string>
+    <string name="privacy_text">Datenschutzrichtlinie: Enigma Bottles\nLetzte Aktualisierung: 3. Juni 2026\n\nDiese Datenschutzrichtlinie gilt für die mobile Anwendung Enigma Bottles für Android-Geräte. Wir setzen uns dafür ein, die Privatsphäre unserer Nutzer zu schützen und zu respektieren. Diese Richtlinie beschreibt, wie Informationen erfasst, verwendet und geschützt werden.\n\n1. Erfassung und Verwendung von Informationen\nA. Lokal gespeicherte Daten\nEnigma Bottles ist so konzipiert, dass es in erster Linie lokal und offline funktioniert.\nWas wir lokal erfassen: Spielfortschritt, Gewinn-/Verluststatistiken, Guthaben an virtuellen Münzen, Leben, Erfolge und die im spielinternen Shop erworbenen Anpassungselemente (Flaschen und Hintergründe).\nHosting: Alle diese Daten werden lokal und sicher auf dem Gerät des Nutzers mithilfe der Room-Datenbank (SQLite) gespeichert. Wir übertragen, teilen oder speichern diese Fortschritts- und Inventardaten nicht auf unseren privaten Cloud-Servern.\n\nB. Von Drittanbieter-Diensten erfasste Informationen\nUm In-App-Käufe und die Anzeige von Werbung zu ermöglichen, nutzt das Spiel Dienste von Drittanbietern, die gemäß ihren eigenen Datenschutzrichtlinien technische Daten vom Gerät des Nutzers erfassen können. Diese Dienste sind:\n- Google Play Services: Wird für Authentifizierungszwecke im App Store und zur Pflege des Android-Ökosystems verwendet.\n- Google Play Billing: Wird zur Abwicklung von Finanztransaktionen für integrierte Käufe verwendet (z. B. Entfernung von Werbung und Erwerb von Gegenständen). Wir haben keinen Zugriff auf Ihre Kreditkartendaten, Bankkonten oder persönlichen Finanzinformationen; alle Transaktionen werden sicher und ausschließlich von Google selbst verarbeitet.\n- Google AdMob (Werbenetzwerk): Wird zur Anzeige von Werbung im Spiel verwendet (z. B. Interstitial- oder Belohnungswerbung). Das AdMob-SDK kann die Werbe-ID Ihres Geräts (GAID), Netzwerkdaten und grundlegende Telemetriedaten erfassen, um personalisierte Werbung anzuzeigen oder die Leistung von Kampagnen zu überwachen.\n\n2. Cookies und Tracking\nDie Anwendung verwendet keine \"Cookies\" direkt im nativen Code. Die in Abschnitt 1B genannten integrierten Werbe- und Abrechnungs-SDKs von Drittanbietern können jedoch Geräte-IDs und ähnliche Technologien verwenden, um Werbung und Finanztransaktionen zu optimieren.\n\n3. Datenweitergabe\nWir verkaufen, vermieten, tauschen oder teilen keine personenbezogenen Daten oder Spieldaten unserer Nutzer mit Dritten, außer in gesetzlich vorgeschriebenen Fällen oder zur Erfüllung der betrieblichen Anforderungen der in Abschnitt 1B beschriebenen Dienstleister.\n\n4. Datensicherheit\nWir implementieren empfohlene Sicherheitsverfahren bei der Anwendungsentwicklung, um die im Sandbox-Bereich des Android-Systems Ihres Mobilgeräts geschriebenen lokalen Datenbankdateien vor unbefugtem Zugriff zu schützen.\n\n5. Nutzerrechte (LGPD und DSGVO)\nIn Übereinstimmung mit dem Allgemeinen Datenschutzgesetz (LGPD - Brasilien) und der Datenschutz-Grundverordnung (DSGVO - Europäische Union) haben Sie das Recht, die mit Ihrem Gerät verknüpften Informationen zu kontrollieren:\n- Datenlöschung: Da Ihre Fortschritts- und Kaufdaten lokal gespeichert werden, können Sie diese jederzeit vollständig löschen, indem Sie die Anwendung von Ihrem Gerät deinstallieren oder unter Einstellungen -> Apps -> Enigma Bottles -> Speicher -> Daten löschen aufrufen.\n- Werbeidentifikation: Sie können die Verwendung der Werbe-ID für die Anzeigenpersonalisierung in den Einstellungen Ihres Android-Betriebssystems verwalten, zurücksetzen oder deaktivieren (Einstellungen -> Datenschutz -> Anzeigen).\n\n6. Schutz der Privatsphäre von Kindern\nEnigma Bottles ist ein Rätsel- und Logikspiel, das für alle Altersgruppen kostenlos ist. Wir erfassen nicht wissentlich personenbezogene Daten von Kindern. Wenn Eltern oder Erziehungsberechtigte feststellen, dass Daten ohne Zustimmung an Drittanbieterdienste übermittelt wurden, kontaktieren Sie uns bitte, damit wir entsprechende Maßnahmen mit unseren Partnernetzwerken ergreifen können.\n\n7. Änderungen dieser Datenschutzrichtlinie\nWir können unsere Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Es wird empfohlen, diese Seite regelmäßig zu überprüfen, um eventuelle Änderungen zu verfolgen. Änderungen treten sofort nach ihrer Veröffentlichung auf dieser Seite in Kraft.\n\n8. Kontakt\nWenn Sie Fragen oder Anregungen zu dieser Datenschutzrichtlinie haben, können Sie uns per E-Mail kontaktieren unter: felipeoc.sousa@gmail.com</string>
     <string name="daily_distillate">Tag %1$d - Tägliches Destillat</string>
     <string name="difficulty_label">Schwierigkeit: %1$s</string>
     <string name="daily_completed">Herausforderung Gelöst!</string>
@@ -318,4 +318,45 @@
     <string name="exit_no_moves_warn">Sie haben noch keine Züge gemacht. Wenn Sie jetzt beenden, wird das Spiel ohne Lebensabzug beendet!</string>
     <string name="exit_without_penalty_btn">Ohne Abzug beenden</string>
     <string name="exit_no_moves_toast">Spiel ohne Abzug beendet.</string>
+
+    <!-- Neue Flaschendesigns (v1.9) -->
+    <string name="skin_hourglass_name">Zeit-Sanduhr</string>
+    <string name="skin_hourglass_desc">Schlanker sanduhrförmiger Flakon, der die Zeit manipuliert.</string>
+    <string name="skin_diamond_flask_name">Diamantenflakon</string>
+    <string name="skin_diamond_flask_desc">Facettierter Flakon in Form eines brillant geschliffenen Diamanten.</string>
+    <string name="skin_skull_name">Makaberer Totenkopf</string>
+    <string name="skin_skull_desc">Dunkler Piratenbehälter in Form eines alchemistischen Schädels.</string>
+    <string name="skin_heart_vial_name">Herzvial</string>
+    <string name="skin_heart_vial_desc">Geschwungenes romantisches Fläschchen in Form eines heilenden Herzens.</string>
+    <string name="skin_cauldron_flask_name">Kesselflakon</string>
+    <string name="skin_cauldron_flask_desc">Bauchiger Flakon mit Seitengriffen, der an einen Minikessel erinnert.</string>
+    <string name="skin_prism_flask_name">Prismenflakon</string>
+    <string name="skin_prism_flask_desc">Scharfe dreieckige Geometrie, die alchemistisches Licht bricht.</string>
+
+    <!-- Neue Hintergründe (v1.9) -->
+    <string name="bg_cyberpunk_name">Cyberpunk-Gasse</string>
+    <string name="bg_cyberpunk_desc">Technologische Zukunft unter ständigem Regen und blau-pinken Neonlichtern.</string>
+    <string name="bg_mystic_swamp_name">Mystischer Sumpf</string>
+    <string name="bg_mystic_swamp_desc">Dunkles Waldwasser mit mysteriösen schwebenden Irrlichtern.</string>
+    <string name="bg_volcano_name">Lavakammer</string>
+    <string name="bg_volcano_desc">Tiefe Vulkanhöhle mit brennenden Flüssen aus geschmolzenem Magma.</string>
+    <string name="bg_frozen_glacier_name">Ewiger Gletscher</string>
+    <string name="bg_frozen_glacier_desc">Komprimierte blaue Eishöhle auf dem Gipfel der Polargebirge.</string>
+    <string name="bg_ancient_temple_name">Tempelruine</string>
+    <string name="bg_ancient_temple_desc">Alte Steinmauern, eingraviert mit leuchtenden magischen Runen.</string>
+    <string name="bg_enchanted_forest_name">Zauberwald</string>
+    <string name="bg_enchanted_forest_desc">Magischer Hain mit goldenen Sonnenstrahlen und Blättern im Wind.</string>
+    <string name="bg_steampunk_name">Steampunk-Werkstatt</string>
+    <string name="bg_steampunk_desc">Viktorianische Industriegießerei mit Bronzezahnrädern und Dampf.</string>
+    <string name="bg_underwater_reef_name">Korallenriff</string>
+    <string name="bg_underwater_reef_desc">Tiefseetauchgang umgeben von bunten Korallen und aktiven Fischen.</string>
+    <string name="bg_supernova_name">Stellare Supernova</string>
+    <string name="bg_supernova_desc">Kosmisches Spektakel eines explodierenden Sterns in dramatischen Farben.</string>
+    <string name="bg_retro_arcade_name">Retro-Arcade</string>
+    <string name="bg_retro_arcade_desc">Leuchtende Pixel-Panels und Neonlichter aus den 80ern.</string>
+    <string name="bg_dark_interface_name">Dunkle Benutzeroberfläche</string>
+    <string name="bg_dark_interface_desc">Minimalistische und komfortable dunkle Schieferoberfläche für Nachtsitzungen.</string>
+    <string name="bg_starry_night_name">Sternennacht</string>
+    <string name="bg_starry_night_desc">Sternenklarer Nachthimmel mit einer leuchtenden Mondsichel und Sternbildern.</string>
+    <string name="view_online">Online ansehen</string>
 </resources>

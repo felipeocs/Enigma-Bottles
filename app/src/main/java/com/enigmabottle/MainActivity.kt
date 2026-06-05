@@ -37,6 +37,8 @@ import android.os.Build
 
 class MainActivity : ComponentActivity() {
 
+    private var billingManager: BillingManager? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AdManager.initialize(applicationContext) // Mover para cima ou manter no onCreate
@@ -53,12 +55,14 @@ class MainActivity : ComponentActivity() {
         }
 
         // Inicializa o gerenciador de compras do Google Play Billing
-        val billingManager = BillingManager(
+        val manager = BillingManager(
             context = applicationContext,
             coroutineScope = lifecycleScope,
             onPremiumPurchased = { purchased ->
                 if (purchased) {
                     viewModel.buyAdFreePlan()
+                } else {
+                    viewModel.revokeAdFreePlan()
                 }
             },
             onHintsPurchased = { count ->
@@ -80,7 +84,8 @@ class MainActivity : ComponentActivity() {
                 viewModel.addComboPack()
             }
         )
-        viewModel.setBilling(billingManager)
+        this.billingManager = manager
+        viewModel.setBilling(manager)
 
         // Configura vibração nativa retrocompatível
         viewModel.triggerVibration = { type ->
@@ -693,5 +698,10 @@ class MainActivity : ComponentActivity() {
                 VibrationType.FAILURE -> vibrator.vibrate(500)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        billingManager?.queryPurchases()
     }
 }

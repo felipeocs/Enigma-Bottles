@@ -149,16 +149,13 @@ class BillingManager(
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                 var premiumFound = false
                 for (purchase in purchaseList) {
+                    // Processa cada compra encontrada para garantir que consumíveis pendentes sejam entregues/consumidos
+                    // e que o premium seja confirmado.
+                    handlePurchase(purchase)
+                    
                     if (purchase.products.contains(PRODUCT_LIFETIME_PREMIUM) && 
                         purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-                        
-                        Log.d(TAG, "Compra premium ativa encontrada!")
                         premiumFound = true
-                        
-                        // Verifica se a compra já foi confirmada (acknowledged)
-                        if (!purchase.isAcknowledged) {
-                            acknowledgePurchase(purchase)
-                        }
                     }
                 }
                 _premiumPurchasedState.value = premiumFound
