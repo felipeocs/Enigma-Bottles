@@ -135,6 +135,7 @@
     <string name="keep_playing_btn">Continuar Jogando</string>
     <string name="next_game_btn">Próximo Jogo</string>
     <string name="back_home_btn">Voltar ao Início</string>
+    <string name="double_coins_btn">Dobrar Moedas</string>
     <string name="unlocked_new_difficulty">Excelente! Você desbloqueou a dificuldade %s!</string>
     <string name="win_praise_moves_low">Incrível! Raciocínio digno de um Mestre Alquimista!</string>
     <string name="win_praise_moves_medium">Muito bom! Seus métodos de combinação estão excepcionais!</string>

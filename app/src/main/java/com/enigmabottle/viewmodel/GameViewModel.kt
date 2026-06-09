@@ -176,6 +176,8 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
     var adTargetReward by mutableStateOf("") // "coins", "lives", "hint" or "xray"
     var interstitialAdVisible by mutableStateOf(false)
     var interstitialAdCountdown by mutableStateOf(5)
+    var hasDoubledCoinsThisTurn by mutableStateOf(false)
+    var lastInterstitialTimeMillis by mutableStateOf(0L)
 
     // Power-up indicators
     var activeHintIndex by mutableStateOf<Int?>(null)
@@ -336,6 +338,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 elapsedTimeSeconds = saved.elapsedTimeSeconds
                 isGameOver = false
                 isGameWon = false
+                hasDoubledCoinsThisTurn = false
                 swapHistoryList.value = emptyList()
 
                 activeHintIndex = null
@@ -379,6 +382,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 elapsedTimeSeconds = saved.elapsedTimeSeconds
                 isGameOver = false
                 isGameWon = false
+                hasDoubledCoinsThisTurn = false
                 swapHistoryList.value = emptyList()
 
                 activeHintIndex = null
@@ -405,6 +409,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             elapsedTimeSeconds = 0
             isGameOver = false
             isGameWon = false
+            hasDoubledCoinsThisTurn = false
             isGamePaused = false
             swapHistoryList.value = emptyList()
 
@@ -675,7 +680,10 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             completedLevelsCount = newLevelsCount
         ) }
 
-        if (!p.isAdFree && (newLevelsCount % 5 == 0)) {
+        val currentTime = System.currentTimeMillis()
+        val threeMinutesMs = 3 * 60 * 1000L
+        if (!p.isAdFree && (currentTime - lastInterstitialTimeMillis >= threeMinutesMs)) {
+            lastInterstitialTimeMillis = currentTime
             launchInterstitialAd()
         }
     }
@@ -811,15 +819,15 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
                 repository.addCoins(75)
             } else if (adTargetReward == "lives") {
                 repository.restoreLives()
-            } else if (adTargetReward == "hint") {
-                repository.updateProfile { it.copy(hintCount = it.hintCount + 1) }
-            } else if (adTargetReward == "xray") {
-                repository.updateProfile { it.copy(xRayCount = it.xRayCount + 1) }
+            } else if (adTargetReward == "double_victory_coins") {
+                repository.updateProfile { it.copy(coins = it.coins + lastCoinsEarned) }
+                lastCoinsEarned *= 2
+                hasDoubledCoinsThisTurn = true
             }
         }
     }
 
-    // Interstitial compulsory ads (every 5 levels)
+    // Interstitial compulsory ads (based on time interval)
     fun launchInterstitialAd() {
         interstitialAdCountdown = 5
         interstitialAdVisible = true
@@ -1002,6 +1010,7 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
             elapsedTimeSeconds = 0
             isGameOver = false
             isGameWon = false
+            hasDoubledCoinsThisTurn = false
             isGamePaused = false
             swapHistoryList.value = emptyList()
 

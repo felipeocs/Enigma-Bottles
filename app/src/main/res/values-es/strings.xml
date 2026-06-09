@@ -135,6 +135,7 @@
     <string name="keep_playing_btn">Continuar Jugando</string>
     <string name="next_game_btn">Siguiente Juego</string>
     <string name="back_home_btn">Volver al Inicio</string>
+    <string name="double_coins_btn">Duplicar Monedas</string>
     <string name="unlocked_new_difficulty">¡Excelente! Desbloqueaste la dificultad %s!</string>
     <string name="win_praise_moves_low">¡Increíble! ¡Pensamiento digno de Alquimista Supremo!</string>
     <string name="win_praise_moves_medium">¡Muy bien! ¡Tu secuencia de mezcla es de alta precisión!</string>

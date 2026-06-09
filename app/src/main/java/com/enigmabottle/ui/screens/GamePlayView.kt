@@ -722,6 +722,36 @@ fun GamePlayView(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        if (!profile.isAdFree && !viewModel.hasDoubledCoinsThisTurn) {
+                            Button(
+                                onClick = { viewModel.launchAdRewardFlow("double_victory_coins") },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .testTag("double_coins_button")
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.MonetizationOn,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = TextRes.get("double_coins_btn", viewModel.currentLanguage),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+
                         val hasNextGame = if (viewModel.isDailyChallenge) {
                             viewModel.isNextDailyChallengeAvailable()
                         } else {

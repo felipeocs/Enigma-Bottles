@@ -485,15 +485,27 @@ class MainActivity : ComponentActivity() {
 
                             LaunchedEffect(Unit) {
                                 if (activity != null) {
-                                    AdManager.showRewardedAd(
-                                        activity = activity,
-                                        onRewardEarned = {
-                                            viewModel.completeAdRewardSimulation()
-                                        },
-                                        onAdClosed = {
-                                            viewModel.adSimulationVisible = false
-                                        }
-                                    )
+                                    if (viewModel.adTargetReward == "double_victory_coins") {
+                                        AdManager.showRewardedInterstitialAd(
+                                            activity = activity,
+                                            onRewardEarned = {
+                                                viewModel.completeAdRewardSimulation()
+                                            },
+                                            onAdClosed = {
+                                                viewModel.adSimulationVisible = false
+                                            }
+                                        )
+                                    } else {
+                                        AdManager.showRewardedAd(
+                                            activity = activity,
+                                            onRewardEarned = {
+                                                viewModel.completeAdRewardSimulation()
+                                            },
+                                            onAdClosed = {
+                                                viewModel.adSimulationVisible = false
+                                            }
+                                        )
+                                    }
                                 } else {
                                     showFallbackSimulation = true
                                 }

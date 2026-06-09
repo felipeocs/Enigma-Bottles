@@ -1,4 +1,4 @@
-﻿package com.enigmabottle.data
+package com.enigmabottle.data
 
 import android.app.Activity
 import android.content.Context
@@ -10,6 +10,8 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 
 object AdManager {
     private const val TAG = "AdManager"
@@ -17,9 +19,11 @@ object AdManager {
     // IDs reais do Google AdMob para produção
     private const val TEST_INTERSTITIAL_ID = "ca-app-pub-9087988028481533/2334570209"
     private const val TEST_REWARDED_ID = "ca-app-pub-9087988028481533/1274815578"
+    private const val REWARDED_INTERSTITIAL_ID = "ca-app-pub-9087988028481533/6840674854"
 
     private var mInterstitialAd: InterstitialAd? = null
     private var mRewardedAd: RewardedAd? = null
+    private var mRewardedInterstitialAd: RewardedInterstitialAd? = null
     private var isInitializing = false
     private var isInitialized = false
 
@@ -38,6 +42,7 @@ object AdManager {
             // Pré-carrega os anúncios logo após a inicialização
             loadInterstitial(context)
             loadRewardedAd(context)
+            loadRewardedInterstitial(context)
             
             onInitComplete?.invoke()
         }
@@ -147,6 +152,63 @@ object AdManager {
         } else {
             Log.w(TAG, "Tentativa de exibir anúncio premiado, mas não estava carregado.")
             loadRewardedAd(activity)
+            onAdClosed?.invoke()
+        }
+    }
+
+    // --- ANÚNCIO INTERSTICIAL PREMIADO (REWARDED INTERSTITIAL) ---
+
+    fun loadRewardedInterstitial(context: Context) {
+        val adRequest = AdRequest.Builder().build()
+        Log.d(TAG, "Carregando anúncio intersticial premiado...")
+        RewardedInterstitialAd.load(
+            context,
+            REWARDED_INTERSTITIAL_ID,
+            adRequest,
+            object : RewardedInterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.e(TAG, "Falha ao carregar intersticial premiado: ${adError.message}")
+                    mRewardedInterstitialAd = null
+                }
+
+                override fun onAdLoaded(rewardedInterstitialAd: RewardedInterstitialAd) {
+                    Log.d(TAG, "Anúncio intersticial premiado carregado com sucesso!")
+                    mRewardedInterstitialAd = rewardedInterstitialAd
+                }
+            }
+        )
+    }
+
+    fun showRewardedInterstitialAd(activity: Activity, onRewardEarned: () -> Unit, onAdClosed: (() -> Unit)? = null) {
+        val ad = mRewardedInterstitialAd
+        if (ad != null) {
+            Log.d(TAG, "Exibindo anúncio intersticial premiado...")
+            var rewardGiven = false
+            ad.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Anúncio intersticial premiado fechado.")
+                    mRewardedInterstitialAd = null
+                    loadRewardedInterstitial(activity)
+                    if (rewardGiven) {
+                        onRewardEarned()
+                    }
+                    onAdClosed?.invoke()
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: com.google.android.gms.ads.AdError) {
+                    Log.e(TAG, "Falha ao exibir anúncio intersticial premiado: ${adError.message}")
+                    mRewardedInterstitialAd = null
+                    loadRewardedInterstitial(activity)
+                    onAdClosed?.invoke()
+                }
+            }
+            ad.show(activity) { _ ->
+                Log.d(TAG, "Recompensa concedida pelo intersticial premiado.")
+                rewardGiven = true
+            }
+        } else {
+            Log.w(TAG, "Tentativa de exibir intersticial premiado, mas não estava carregado.")
+            loadRewardedInterstitial(activity)
             onAdClosed?.invoke()
         }
     }

@@ -134,6 +134,7 @@
     <string name="keep_playing_btn">Continuer à Jouer</string>
     <string name="next_game_btn">Jeu Suivant</string>
     <string name="back_home_btn">Retour à l\'Accueil</string>
+    <string name="double_coins_btn">Doubler les pièces</string>
     <string name="unlocked_new_difficulty">Génial ! Vous avez débloqué la difficulté %s !</string>
     <string name="win_praise_moves_low">Incroyable ! Logique digne d\'un Grand Alchimiste !</string>
     <string name="win_praise_moves_medium">Très bien ! Votre mélange de potions est exceptionnel !</string>

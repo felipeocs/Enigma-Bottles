@@ -134,6 +134,7 @@
     <string name="keep_playing_btn">Weiterspielen</string>
     <string name="next_game_btn">Nächstes Spiel</string>
     <string name="back_home_btn">Zurück zum Hauptmenü</string>
+    <string name="double_coins_btn">Münzen verdoppeln</string>
     <string name="unlocked_new_difficulty">Hervorragend! Sie haben Schwierigkeit %s freigeschaltet!</string>
     <string name="win_praise_moves_low">Unglaublich! Logik eines Meisteralchemisten würdig!</string>
     <string name="win_praise_moves_medium">Sehr gut! Ihre Trankmischungen sind außergewöhnlich!</string>

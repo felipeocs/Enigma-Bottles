@@ -40,9 +40,13 @@ secretsGradlePlugin = "2.0.1"
 firebaseBom = "34.12.0"
 playServicesAds = "23.0.0"
 playBilling = "7.0.0"
+androidxFragment = "1.8.5"
 
 
 [libraries]
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "androidxFragment" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

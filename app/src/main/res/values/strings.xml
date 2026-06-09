@@ -135,6 +135,7 @@
     <string name="keep_playing_btn">Keep Playing</string>
     <string name="next_game_btn">Next Game</string>
     <string name="back_home_btn">Back to Home</string>
+    <string name="double_coins_btn">Double Coins</string>
     <string name="unlocked_new_difficulty">Fantastic! You unlocked %s difficulty!</string>
     <string name="win_praise_moves_low">Incredible! Logic worthy of a Grand Alchemist!</string>
     <string name="win_praise_moves_medium">Very clean! Your potion synthesis was exceptional!</string>
