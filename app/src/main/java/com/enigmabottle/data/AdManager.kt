@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
@@ -34,6 +35,14 @@ object AdManager {
         }
         isInitializing = true
         Log.d(TAG, "Inicializando MobileAds SDK...")
+
+        // Configuração de anúncios apropriada para crianças e famílias
+        val requestConfiguration = MobileAds.getRequestConfiguration().toBuilder()
+            .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
+            .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G)
+            .build()
+        MobileAds.setRequestConfiguration(requestConfiguration)
+
         MobileAds.initialize(context) { _ ->
             isInitialized = true
             isInitializing = false
