@@ -79,7 +79,6 @@ class BillingManager(
         })
     }
 
-    // Consulta os detalhes dos produtos cadastrados na Google Play Store
     fun queryProductDetails() {
         if (!isConnected) return
 
@@ -126,9 +125,10 @@ class BillingManager(
             .setProductList(productList)
             .build()
 
-        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+        billingClient.queryProductDetailsAsync(params) { billingResult, queryProductDetailsResult ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                val detailsMap = productDetailsList.associateBy { it.productId }
+                val safeList = queryProductDetailsResult.productDetailsList ?: emptyList()
+                val detailsMap = safeList.associateBy { it.productId }
                 Log.d(TAG, "Detalhes dos produtos carregados: ${detailsMap.keys}")
                 _productsDetailsMapState.value = detailsMap
             } else {
@@ -137,7 +137,6 @@ class BillingManager(
         }
     }
 
-    // Consulta as compras já efetuadas pelo usuário
     fun queryPurchases() {
         if (!isConnected) return
 
@@ -145,12 +144,11 @@ class BillingManager(
             .setProductType(BillingClient.ProductType.INAPP)
             .build()
 
-        billingClient.queryPurchasesAsync(params) { billingResult, purchaseList ->
+        billingClient.queryPurchasesAsync(params) { billingResult: BillingResult, purchaseList: List<Purchase>? ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                 var premiumFound = false
-                for (purchase in purchaseList) {
-                    // Processa cada compra encontrada para garantir que consumíveis pendentes sejam entregues/consumidos
-                    // e que o premium seja confirmado.
+                val safePurchases = purchaseList ?: emptyList()
+                for (purchase in safePurchases) {
                     handlePurchase(purchase)
                     
                     if (purchase.products.contains(PRODUCT_LIFETIME_PREMIUM) && 
@@ -166,7 +164,6 @@ class BillingManager(
         }
     }
 
-    // Inicia o fluxo de compra para um ID de produto específico
     fun launchBillingFlow(activity: Activity, productId: String): Boolean {
         val productDetails = _productsDetailsMapState.value[productId]
         if (!isConnected || productDetails == null) {
@@ -188,7 +185,6 @@ class BillingManager(
         return billingResult.responseCode == BillingClient.BillingResponseCode.OK
     }
 
-    // Callback de quando uma compra é atualizada/efetuada
     override fun onPurchasesUpdated(billingResult: BillingResult, purchases: List<Purchase>?) {
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
             for (purchase in purchases) {
@@ -216,49 +212,49 @@ class BillingManager(
                     }
                     PRODUCT_PACK_HINTS -> {
                         Log.d(TAG, "Processando compra de pacote de dicas consumível...")
-                        consumePurchase(purchase) {
+                        consumePurchaseLocally(purchase) {
                             onHintsPurchased(10)
                         }
                     }
                     PRODUCT_PACK_XRAY -> {
                         Log.d(TAG, "Processando compra de pacote de raio-x consumível...")
-                        consumePurchase(purchase) {
+                        consumePurchaseLocally(purchase) {
                             onXRayPurchased(10)
                         }
                     }
                     PRODUCT_PACK_REVEAL -> {
                         Log.d(TAG, "Processando compra de pacote de revelar consumível...")
-                        consumePurchase(purchase) {
+                        consumePurchaseLocally(purchase) {
                             onRevealPurchased(10)
                         }
                     }
                     PRODUCT_PACK_FREEZE -> {
                         Log.d(TAG, "Processando compra de pacote de congelar consumível...")
-                        consumePurchase(purchase) {
+                        consumePurchaseLocally(purchase) {
                             onFreezePurchased(10)
                         }
                     }
                     PRODUCT_COINS_500 -> {
                         Log.d(TAG, "Processando compra de 500 moedas...")
-                        consumePurchase(purchase) {
+                        consumePurchaseLocally(purchase) {
                             onCoinsPurchased(500)
                         }
                     }
                     PRODUCT_COINS_1000 -> {
                         Log.d(TAG, "Processando compra de 1000 moedas...")
-                        consumePurchase(purchase) {
+                        consumePurchaseLocally(purchase) {
                             onCoinsPurchased(1000)
                         }
                     }
                     PRODUCT_COINS_5000 -> {
                         Log.d(TAG, "Processando compra de 5000 moedas...")
-                        consumePurchase(purchase) {
+                        consumePurchaseLocally(purchase) {
                             onCoinsPurchased(5000)
                         }
                     }
                     PRODUCT_COMBO_PACK -> {
                         Log.d(TAG, "Processando compra do combo pack...")
-                        consumePurchase(purchase) {
+                        consumePurchaseLocally(purchase) {
                             onComboPurchased()
                         }
                     }
@@ -267,7 +263,6 @@ class BillingManager(
         }
     }
 
-    // Confirmação obrigatória da compra (Não-Consumíveis)
     private fun acknowledgePurchase(purchase: Purchase) {
         val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
             .setPurchaseToken(purchase.purchaseToken)
@@ -288,8 +283,7 @@ class BillingManager(
         }
     }
 
-    // Consumo da compra para produtos Consumíveis (Dicas e Raio-X)
-    private fun consumePurchase(purchase: Purchase, onConsumedSuccess: () -> Unit) {
+    private fun consumePurchaseLocally(purchase: Purchase, onConsumedSuccess: () -> Unit) {
         val consumeParams = ConsumeParams.newBuilder()
             .setPurchaseToken(purchase.purchaseToken)
             .build()
