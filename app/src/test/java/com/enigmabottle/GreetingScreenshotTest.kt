@@ -1,4 +1,4 @@
-﻿package com.enigmabottle
+package com.enigmabottle
 
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -22,7 +22,7 @@ class GreetingScreenshotTest {
 
   @Test
   fun greeting_screenshot() {
-    composeTestRule.setContent { MyApplicationTheme { Text("Enigma Bottles") } }
+    composeTestRule.setContent { MyApplicationTheme { Text("Enigma Bottle") } }
 
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/greeting.png")
   }

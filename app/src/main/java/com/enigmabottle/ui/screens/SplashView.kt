@@ -114,7 +114,7 @@ fun SplashView(
 
             // 2. Title & Brand Identity
             Text(
-                text = "ENIGMA BOTTLES",
+                text = "ENIGMA BOTTLE",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color(0xFFFFD700), // Sparkling Gold

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Enigma Bottles"
+rootProject.name = "Enigma Bottle"
 
 include(":app")

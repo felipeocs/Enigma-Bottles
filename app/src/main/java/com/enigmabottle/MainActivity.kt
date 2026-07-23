@@ -642,7 +642,7 @@ class MainActivity : ComponentActivity() {
                                                     horizontalAlignment = Alignment.CenterHorizontally
                                                 ) {
                                                     Text(
-                                                        text = "👑 ENIGMA BOTTLES PRIME 👑",
+                                                        text = "👑 ENIGMA BOTTLE PRIME 👑",
                                                         fontSize = 13.sp,
                                                         fontWeight = FontWeight.ExtraBold,
                                                         color = Color(0xFFFFD700)

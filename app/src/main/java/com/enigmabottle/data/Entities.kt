@@ -34,7 +34,8 @@ data class UserProfile(
     val completedLevelsCount: Int = 0,
     val infiniteLivesEndTime: Long = 0L,
     val lastInfiniteLivesActivationDate: String = "",
-    val languageCode: String = "pt"
+    val languageCode: String = "pt",
+    val tutorialCompleted: Boolean = false
 ) {
     fun getPurchasedSkins(): List<String> = purchasedSkinsCsv.split(",").filter { it.isNotBlank() }
     fun getPurchasedBgs(): List<String> = purchasedBgsCsv.split(",").filter { it.isNotBlank() }

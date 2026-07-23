@@ -312,7 +312,7 @@ fun SettingsView(
                     val formattedVersion = try {
                         String.format(rawVersion, com.enigmabottle.BuildConfig.VERSION_NAME)
                     } catch (e: Exception) {
-                        "Enigma Bottles v${com.enigmabottle.BuildConfig.VERSION_NAME}"
+                        "Enigma Bottle v${com.enigmabottle.BuildConfig.VERSION_NAME}"
                     }
                     Text(
                         text = formattedVersion,

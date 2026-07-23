@@ -1,4 +1,4 @@
-﻿package com.enigmabottle
+package com.enigmabottle
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
@@ -17,7 +17,7 @@ class ExampleRobolectricTest {
   fun `read string from context`() {
     val context = ApplicationProvider.getApplicationContext<Context>()
     val appName = context.getString(R.string.app_name)
-    assertEquals("Enigma Bottles", appName)
+    assertEquals("Enigma Bottle", appName)
   }
 
   @Test

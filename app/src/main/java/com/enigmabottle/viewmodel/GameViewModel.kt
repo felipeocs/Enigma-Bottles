@@ -91,6 +91,12 @@ class GameViewModel(private val repository: GameRepository) : ViewModel() {
         }
     }
 
+    fun completeTutorial() {
+        viewModelScope.launch {
+            repository.updateProfile { p -> p.copy(tutorialCompleted = true) }
+        }
+    }
+
     fun addXRay(count: Int) {
         viewModelScope.launch {
             repository.updateProfile { p -> p.copy(xRayCount = p.xRayCount + count) }

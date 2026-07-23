@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.enigmabottle.data.*
 import com.enigmabottle.ui.components.BottleGlassware
 import com.enigmabottle.ui.components.GameThemeBackground
+import com.enigmabottle.ui.components.TutorialDialog
 import com.enigmabottle.viewmodel.GameViewModel
 import com.enigmabottle.viewmodel.Screen
 
@@ -46,6 +47,7 @@ fun GamePlayView(
 
     var showConfirmPowerUpDialog by remember { mutableStateOf(false) }
     var pendingPowerUpToConfirm by remember { mutableStateOf<String?>(null) } // "hint", "reveal", "xray", "freeze"
+    var showManualTutorial by remember { mutableStateOf(false) }
 
     // Calculate match info
     val activeBottlesCount = viewModel.boardSequence.size
@@ -151,25 +153,47 @@ fun GamePlayView(
                     }
                 }
 
-                // Lado Direito: Botão Pause
+                // Lado Direito: Botões Ajuda e Pause
                 if (!viewModel.isGameOver) {
-                    IconButton(
-                        onClick = { viewModel.pauseGame() },
-                        modifier = Modifier
-                            .size(44.dp)
-                            .background(
-                                if (isLight) Color(0xFFF1F5F9) else Color.Black.copy(alpha = 0.5f),
-                                CircleShape
-                            )
-                            .align(Alignment.CenterEnd)
-                            .testTag("pause_game_button")
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Pause,
-                            contentDescription = "Pausar",
-                            tint = if (isLight) Color(0xFF475569) else Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        IconButton(
+                            onClick = { showManualTutorial = true },
+                            modifier = Modifier
+                                .size(44.dp)
+                                .background(
+                                    if (isLight) Color(0xFFF1F5F9) else Color.Black.copy(alpha = 0.5f),
+                                    CircleShape
+                                )
+                                .testTag("help_game_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Help,
+                                contentDescription = "Ajuda",
+                                tint = if (isLight) Color(0xFF475569) else Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { viewModel.pauseGame() },
+                            modifier = Modifier
+                                .size(44.dp)
+                                .background(
+                                    if (isLight) Color(0xFFF1F5F9) else Color.Black.copy(alpha = 0.5f),
+                                    CircleShape
+                                )
+                                .testTag("pause_game_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Pause,
+                                contentDescription = "Pausar",
+                                tint = if (isLight) Color(0xFF475569) else Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -712,6 +736,19 @@ fun GamePlayView(
             )
         }
 
+        if ((!profile.tutorialCompleted || showManualTutorial) && !viewModel.isGameOver) {
+            TutorialDialog(
+                currentLanguage = viewModel.currentLanguage,
+                isLight = isLight,
+                onComplete = {
+                    if (!profile.tutorialCompleted) {
+                        viewModel.completeTutorial()
+                    }
+                    showManualTutorial = false
+                }
+            )
+        }
+
         // --- WINNER CELEBRATION GAME DIALOG ---
         if (viewModel.isGameOver && viewModel.isGameWon) {
             AlertDialog(
@@ -1011,7 +1048,7 @@ fun GamePlayView(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "ENIGMA BOTTLES",
+                            text = "ENIGMA BOTTLE",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color(0xFFFFD700),

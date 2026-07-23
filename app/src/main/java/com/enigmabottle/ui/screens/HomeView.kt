@@ -214,7 +214,7 @@ fun HomeView(
                         )
                     }
                     Text(
-                        text = "ENIGMA BOTTLES",
+                        text = "ENIGMA BOTTLE",
                         style = TextStyle(
                             brush = Brush.linearGradient(
                                 colors = if (isLight) {
