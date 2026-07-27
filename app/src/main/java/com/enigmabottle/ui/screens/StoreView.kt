@@ -90,31 +90,31 @@ fun StoreView(
     }
 
     val premiumPrice = productsDetailsMap[BillingManager.PRODUCT_LIFETIME_PREMIUM]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 9,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 9.90"
     
     val hintsPackPrice = productsDetailsMap[BillingManager.PRODUCT_PACK_HINTS]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 4,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 4.90"
         
     val xrayPackPrice = productsDetailsMap[BillingManager.PRODUCT_PACK_XRAY]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 3,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 3.90"
 
     val revealPackPrice = productsDetailsMap[BillingManager.PRODUCT_PACK_REVEAL]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 5,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 5.90"
 
     val freezePackPrice = productsDetailsMap[BillingManager.PRODUCT_PACK_FREEZE]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 2,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 2.90"
 
     val coins500Price = productsDetailsMap[BillingManager.PRODUCT_COINS_500]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 6,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 6.90"
     
     val coins1000Price = productsDetailsMap[BillingManager.PRODUCT_COINS_1000]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 11,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 11.90"
 
     val coins5000Price = productsDetailsMap[BillingManager.PRODUCT_COINS_5000]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 49,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 49.90"
 
     val comboPackPrice = productsDetailsMap[BillingManager.PRODUCT_COMBO_PACK]
-        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "R$ 29,90"
+        ?.oneTimePurchaseOfferDetails?.formattedPrice ?: "$ 29.90"
 
     val skinItems = listOf(
         SkinCommodity("classic", TextRes.get("skin_classic_name", viewModel.currentLanguage), TextRes.get("skin_classic_desc", viewModel.currentLanguage), 0, Color(0xFFE53935)),
@@ -585,6 +585,29 @@ fun StoreView(
                         .padding(bottom = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    
+                    // Cabeçalho claro indicando loja com dinheiro real
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFEF4444).copy(alpha = 0.1f)),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(Icons.Default.Storefront, contentDescription = null, tint = Color(0xFFEF4444), modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = TextRes.get("real_money_store_title", viewModel.currentLanguage),
+                                color = Color(0xFFEF4444),
+                                fontWeight = FontWeight.Black,
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
+
                     // 1. Lifetime Ad-Free Plan Card
                     Card(
                         modifier = Modifier
@@ -777,8 +800,10 @@ fun StoreView(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.Center
                                     ) {
+                                        Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
                                         Text(
-                                            text = String.format(TextRes.get("premium_buy_btn", viewModel.currentLanguage), premiumPrice),
+                                            text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), premiumPrice),
                                             color = Color.White,
                                             fontWeight = FontWeight.Black,
                                             fontSize = 13.sp
@@ -884,12 +909,16 @@ fun StoreView(
                                 shape = RoundedCornerShape(10.dp),
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                             ) {
-                                Text(
-                                    text = hintsPackPrice,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), hintsPackPrice),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                }
                             }
                         }
                     }
@@ -966,12 +995,16 @@ fun StoreView(
                                 shape = RoundedCornerShape(10.dp),
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                             ) {
-                                Text(
-                                    text = xrayPackPrice,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), xrayPackPrice),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                }
                             }
                         }
                     }
@@ -1048,12 +1081,16 @@ fun StoreView(
                                 shape = RoundedCornerShape(10.dp),
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                             ) {
-                                Text(
-                                    text = revealPackPrice,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), revealPackPrice),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                }
                             }
                         }
                     }
@@ -1130,12 +1167,16 @@ fun StoreView(
                                 shape = RoundedCornerShape(10.dp),
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                             ) {
-                                Text(
-                                    text = freezePackPrice,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), freezePackPrice),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp
+                                    )
+                                }
                             }
                         }
                     }
@@ -1219,7 +1260,11 @@ fun StoreView(
                                 shape = RoundedCornerShape(10.dp),
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                             ) {
-                                Text(text = coins500Price, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), coins500Price), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                }
                             }
                         }
                     }
@@ -1284,7 +1329,11 @@ fun StoreView(
                                 shape = RoundedCornerShape(10.dp),
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                             ) {
-                                Text(text = coins1000Price, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), coins1000Price), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                }
                             }
                         }
                     }
@@ -1349,7 +1398,11 @@ fun StoreView(
                                 shape = RoundedCornerShape(10.dp),
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                             ) {
-                                Text(text = coins5000Price, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), coins5000Price), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                }
                             }
                         }
                     }
@@ -1476,12 +1529,16 @@ fun StoreView(
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.fillMaxWidth().height(44.dp)
                             ) {
-                                Text(
-                                    text = comboPackPrice,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Black,
-                                    fontSize = 14.sp
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = String.format(TextRes.get("buy_for_price", viewModel.currentLanguage), comboPackPrice),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 14.sp
+                                    )
+                                }
                             }
                         }
                     }

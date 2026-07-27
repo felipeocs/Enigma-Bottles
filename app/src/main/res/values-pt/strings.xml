@@ -367,4 +367,6 @@
     <string name="tutorial_step3">Use a lógica para deduzir a sequência arcana!</string>
     <string name="tutorial_btn_next">Próximo</string>
     <string name="tutorial_btn_finish">Entendi! Vamos jogar</string>
+    <string name="buy_for_price">Comprar por %s</string>
+    <string name="real_money_store_title">Loja (Dinheiro Real)</string>
 </resources>

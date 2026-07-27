@@ -360,4 +360,6 @@
     <string name="bg_starry_night_name">Sternennacht</string>
     <string name="bg_starry_night_desc">Sternenklarer Nachthimmel mit einer leuchtenden Mondsichel und Sternbildern.</string>
     <string name="view_online">Online ansehen</string>
+    <string name="buy_for_price">Kaufen für %s</string>
+    <string name="real_money_store_title">Shop (Echtes Geld)</string>
 </resources>

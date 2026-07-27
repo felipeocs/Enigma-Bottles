@@ -367,4 +367,6 @@
     <string name="tutorial_step3">Use logic to deduce the arcane sequence!</string>
     <string name="tutorial_btn_next">Next</string>
     <string name="tutorial_btn_finish">Got it! Let\'s play</string>
+    <string name="buy_for_price">Buy for %s</string>
+    <string name="real_money_store_title">Real Money Store</string>
 </resources>

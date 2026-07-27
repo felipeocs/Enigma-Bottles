@@ -14,8 +14,8 @@ android {
     applicationId = "com.enigmabottle"
     minSdk = 24
     targetSdk = 36
-    versionCode = 17
-    versionName = "2.1.1"
+    versionCode = 18
+    versionName = "2.1.2"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
